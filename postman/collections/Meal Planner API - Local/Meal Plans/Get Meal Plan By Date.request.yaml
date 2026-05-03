@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/meal-plans/account/1/date/2026-05-03"
+method: GET
+order: 2000

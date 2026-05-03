@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/meal-plans?accountId=1"
+method: POST
+headers:
+  Content-Type: application/json
+queryParams:
+  accountId: "1"
+body:
+  type: text
+  content: |-
+    {
+      "planName": "Lunch Plan",
+      "planDate": "2026-05-03"
+    }
+order: 3000

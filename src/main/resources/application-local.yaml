@@ -1,0 +1,37 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/meal_planner_system?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8
+    username: root
+    password: 123456
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# JWT (dùng secret đơn giản khi test local)
+# app:
+#   jwt:
+#     secret: local-dev-secret-key-change-in-production-32chars
+#     expiration-ms: 86400000        # 1 ngày
+#     refresh-expiration-ms: 604800000  # 7 ngày
+
+#   # CORS: cho phép frontend dev chạy trên cổng khác
+#   cors:
+#     allowed-origins:
+#       - http://localhost:3000
+#       - http://localhost:5173
+#     allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
+#     allowed-headers: "*"
+#     allow-credentials: true

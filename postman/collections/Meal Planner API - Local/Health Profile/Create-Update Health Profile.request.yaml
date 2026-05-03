@@ -1,0 +1,18 @@
+$kind: http-request
+name: Create/Update Health Profile
+url: "{{baseUrl}}/health-profile/1"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fullName": "Nguyen Van A",
+      "age": 30,
+      "gender": "MALE",
+      "heightCm": 175,
+      "weightKg": 70,
+      "avatarUrl": "https://example.com/avatar.jpg"
+    }
+order: 2000
