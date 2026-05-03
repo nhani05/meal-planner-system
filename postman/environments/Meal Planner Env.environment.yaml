@@ -1,0 +1,4 @@
+name: Meal Planner Env
+values:
+  - key: baseUrl
+    value: 'http://localhost:8080/api'

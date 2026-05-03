@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/meal-plans/1"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "planName": "Lunch Plan (updated)",
+      "planDate": "2026-05-03"
+    }
+order: 4000

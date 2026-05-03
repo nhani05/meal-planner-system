@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/dishes"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Grilled Chicken",
+      "imageUrl": "https://example.com/chicken.jpg",
+      "source": "SYSTEM",
+      "difficulty": 2,
+      "totalTimeMin": 45
+    }
+order: 3000

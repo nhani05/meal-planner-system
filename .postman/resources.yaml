@@ -1,0 +1,13 @@
+# Use this workspace to collaborate
+workspace:
+  id: 3a89e0dc-4d2b-4ab1-8575-0ec8ff312a53
+
+localResources:
+  collections:
+    - ..\docs\postman_collection.json
+  environments:
+    - ..\docs\postman_environment.json
+
+cloudResources:
+  collections:
+    ..\postman\collections\Meal Planner API - Local: fbe6a5a1-b1d0-4338-8bfe-2e16038a1185
