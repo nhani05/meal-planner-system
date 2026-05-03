@@ -34,7 +34,7 @@ public class Dish {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.example.javaweb.meal_planner_system.entity.converter.EnumConverters.DishSourceConverter.class)
     @Column(nullable = false)
     private DishSource source;
 
@@ -42,7 +42,7 @@ public class Dish {
     @JoinColumn(name = "account_id")
     private UserAccount account;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.example.javaweb.meal_planner_system.entity.converter.EnumConverters.DishDifficultyConverter.class)
     private DishDifficulty difficulty;
 
     @Column(name = "total_time_min")

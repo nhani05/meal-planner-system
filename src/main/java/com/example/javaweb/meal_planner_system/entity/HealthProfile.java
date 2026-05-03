@@ -30,7 +30,7 @@ public class HealthProfile {
     @Column(name = "full_name", length = 100)
     private String fullName;
 
-    @Column
+    @Column(columnDefinition = "tinyint unsigned")
     private Integer age;
 
     @Convert(converter = com.example.javaweb.meal_planner_system.entity.converter.EnumConverters.GenderConverter.class)
