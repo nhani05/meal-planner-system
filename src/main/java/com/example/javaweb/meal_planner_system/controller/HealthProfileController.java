@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * Controller for health profile management
  */
 @RestController
-@RequestMapping("/api/health-profile")
+@RequestMapping("/health-profile")
 @CrossOrigin(origins = "*")
 public class HealthProfileController {
 

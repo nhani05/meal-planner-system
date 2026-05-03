@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Controller for meal plan management
  */
 @RestController
-@RequestMapping("/api/meal-plans")
+@RequestMapping("/meal-plans")
 @CrossOrigin(origins = "*")
 public class MealPlanController {
 

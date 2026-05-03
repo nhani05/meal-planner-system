@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * Controller for dish management
  */
 @RestController
-@RequestMapping("/api/dishes")
+@RequestMapping("/dishes")
 @CrossOrigin(origins = "*")
 public class DishController {
 
