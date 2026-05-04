@@ -8,6 +8,8 @@ localResources:
   environments:
     - ..\docs\postman_environment.json
 
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
 cloudResources:
   collections:
-    ..\postman\collections\Meal Planner API - Local: fbe6a5a1-b1d0-4338-8bfe-2e16038a1185
+    ..\postman\collections\Meal Planner API - Complete (System): c9dc4f41-9f19-4fbc-bbaf-908fe14ddb69

@@ -1,0 +1,17 @@
+package com.example.javaweb.meal_planner_system.service;
+
+import com.example.javaweb.meal_planner_system.dto.AdminStatsDTO;
+import com.example.javaweb.meal_planner_system.dto.FeedbackDTO;
+import com.example.javaweb.meal_planner_system.dto.UserAccountDTO;
+import com.example.javaweb.meal_planner_system.entity.enums.FeedbackStatus;
+import com.example.javaweb.meal_planner_system.entity.enums.UserStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+public interface AdminService {
+    AdminStatsDTO getStatistics();
+    Page<UserAccountDTO> getAllUsers(String keyword, UserStatus status, Pageable pageable);
+    void updateUserStatus(Long userId, UserStatus status);
+    Page<FeedbackDTO> getFeedbacks(FeedbackStatus status, Pageable pageable);
+    void updateFeedbackStatus(Long feedbackId, FeedbackStatus status);
+}

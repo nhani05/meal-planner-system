@@ -16,4 +16,5 @@ public interface MealPlanRepository extends JpaRepository<MealPlan, Long> {
     List<MealPlan> findByAccountId(Long accountId);
     List<MealPlan> findByAccountIdAndPlanDateBetween(Long accountId, LocalDate startDate, LocalDate endDate);
     Optional<MealPlan> findByAccountIdAndPlanDate(Long accountId, LocalDate planDate);
+    long countByPlanDate(LocalDate planDate);
 }

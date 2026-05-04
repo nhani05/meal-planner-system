@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{baseUrl}}/health-goal/1"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "goalType": "weight_loss",
+      "activityLevel": "medium",
+      "targetWeightKg": 65.0,
+      "dailyCaloriesKcal": 1800,
+      "proteinGDay": 120.0,
+      "carbGDay": 200.0,
+      "fatGDay": 60.0
+    }
+order: 4000
