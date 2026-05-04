@@ -1,4 +1,5 @@
 $kind: http-request
+name: Create Dish
 url: "{{baseUrl}}/dishes"
 method: POST
 headers:
@@ -13,4 +14,8 @@ body:
       "difficulty": 2,
       "totalTimeMin": 45
     }
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCMjNEQ0tIMDgzIiwiaWF0IjoxNzc3ODY1MDMzLCJleHAiOjE3Nzc5NTE0MzMsInJvbGUiOiJBRE1JTiJ9.UqO1JHjENI3Rd3pMzduNtw_hJgGO0kgfA2coT2EDS5k
 order: 3000

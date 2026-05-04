@@ -1,4 +1,9 @@
 $kind: http-request
+name: Get Health Profile
 url: "{{baseUrl}}/health-profile/1"
 method: GET
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCMjNEQ0tIMDgzIiwiaWF0IjoxNzc3ODY1MDMzLCJleHAiOjE3Nzc5NTE0MzMsInJvbGUiOiJBRE1JTiJ9.UqO1JHjENI3Rd3pMzduNtw_hJgGO0kgfA2coT2EDS5k
 order: 1000

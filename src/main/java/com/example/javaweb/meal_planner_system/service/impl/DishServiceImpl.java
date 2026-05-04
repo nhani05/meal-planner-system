@@ -6,6 +6,7 @@ import com.example.javaweb.meal_planner_system.entity.enums.DishSource;
 import com.example.javaweb.meal_planner_system.exception.BadRequestException;
 import com.example.javaweb.meal_planner_system.exception.ResourceNotFoundException;
 import com.example.javaweb.meal_planner_system.repository.DishRepository;
+import com.example.javaweb.meal_planner_system.repository.PortionRepository;
 import com.example.javaweb.meal_planner_system.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private DishRepository dishRepository;
+
+    @Autowired
+    private PortionRepository portionRepository;
 
     @Override
     public Dish save(Dish dish) {
@@ -69,6 +73,10 @@ public class DishServiceImpl implements DishService {
         if (!dishRepository.existsById(id)) {
             throw new ResourceNotFoundException("Dish not found with id " + id);
         }
+        // Delete all portions associated with this dish first to satisfy FK constraints
+        List<com.example.javaweb.meal_planner_system.entity.Portion> portions = portionRepository.findByDishId(id);
+        portionRepository.deleteAll(portions);
+        // Then delete the dish
         dishRepository.deleteById(id);
     }
 }

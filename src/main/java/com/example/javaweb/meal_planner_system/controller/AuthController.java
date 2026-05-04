@@ -21,6 +21,12 @@ public class AuthController {
     @Autowired
     private UserAccountService userAccountService;
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private com.example.javaweb.meal_planner_system.security.JwtUtil jwtUtil;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO) {
         if (registerDTO.getPassword() == null || !registerDTO.getPassword().equals(registerDTO.getPasswordConfirm())) {
@@ -43,7 +49,16 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         var user = userAccountService.findByUsername(loginDTO.getUsername());
         if (user.isPresent()) {
-            return ResponseEntity.ok(userAccountService.convertToDTO(user.get()));
+            var u = user.get();
+            if (passwordEncoder.matches(loginDTO.getPassword(), u.getPasswordHash())) {
+                String token = jwtUtil.generateToken(u);
+                var dto = userAccountService.convertToDTO(u);
+                java.util.Map<String, Object> body = new java.util.HashMap<>();
+                body.put("token", token);
+                body.put("user", dto);
+                return ResponseEntity.ok(body);
+            }
+            throw new com.example.javaweb.meal_planner_system.exception.BadRequestException("Invalid username or password");
         }
         throw new com.example.javaweb.meal_planner_system.exception.BadRequestException("Invalid username or password");
     }

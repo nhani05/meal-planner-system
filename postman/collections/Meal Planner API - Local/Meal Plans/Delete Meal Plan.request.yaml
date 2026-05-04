@@ -1,4 +1,9 @@
 $kind: http-request
+name: Delete Meal Plan
 url: "{{baseUrl}}/meal-plans/1"
 method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCMjNEQ0tIMDgzIiwiaWF0IjoxNzc3ODY1MDMzLCJleHAiOjE3Nzc5NTE0MzMsInJvbGUiOiJBRE1JTiJ9.UqO1JHjENI3Rd3pMzduNtw_hJgGO0kgfA2coT2EDS5k
 order: 5000
