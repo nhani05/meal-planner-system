@@ -22,6 +22,9 @@ public class MealPlanServiceImpl implements MealPlanService {
     @Autowired
     private MealPlanRepository mealPlanRepository;
 
+    @Autowired
+    private com.example.javaweb.meal_planner_system.service.UserAccountService userAccountService;
+
     @Override
     public MealPlan save(MealPlan mealPlan) {
         return mealPlanRepository.save(mealPlan);
@@ -59,5 +62,27 @@ public class MealPlanServiceImpl implements MealPlanService {
     @Override
     public void delete(Long id) {
         mealPlanRepository.deleteById(id);
+    }
+
+    @Override
+    public MealPlanDTO createForAccount(Long accountId, MealPlanDTO mealPlanDTO) {
+        com.example.javaweb.meal_planner_system.entity.UserAccount account = userAccountService.findById(accountId);
+
+        MealPlan plan = new MealPlan();
+        plan.setAccount(account);
+        plan.setPlanName(mealPlanDTO.getPlanName());
+        plan.setPlanDate(mealPlanDTO.getPlanDate());
+
+        MealPlan saved = mealPlanRepository.save(plan);
+        return convertToDTO(saved);
+    }
+
+    @Override
+    public MealPlanDTO updateFromDTO(Long id, MealPlanDTO mealPlanDTO) {
+        MealPlan plan = findById(id);
+        plan.setPlanName(mealPlanDTO.getPlanName());
+        plan.setPlanDate(mealPlanDTO.getPlanDate());
+        MealPlan updated = mealPlanRepository.save(plan);
+        return convertToDTO(updated);
     }
 }

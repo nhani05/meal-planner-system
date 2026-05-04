@@ -13,4 +13,6 @@ public interface HealthProfileService {
     Optional<HealthProfile> findByAccountId(Long accountId);
     HealthProfileDTO convertToDTO(HealthProfile healthProfile);
     HealthProfile findById(Long id);
+    // Create or update health profile for an account using DTO data
+    HealthProfileDTO createOrUpdateForAccount(Long accountId, HealthProfileDTO healthProfileDTO);
 }

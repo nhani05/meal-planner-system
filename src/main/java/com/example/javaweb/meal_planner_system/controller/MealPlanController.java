@@ -1,19 +1,27 @@
 package com.example.javaweb.meal_planner_system.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 // Module: Controller
 
 import com.example.javaweb.meal_planner_system.dto.MealPlanDTO;
 import com.example.javaweb.meal_planner_system.entity.MealPlan;
-import com.example.javaweb.meal_planner_system.entity.UserAccount;
 import com.example.javaweb.meal_planner_system.service.MealPlanService;
-import com.example.javaweb.meal_planner_system.service.UserAccountService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controller for meal plan management
@@ -25,9 +33,6 @@ public class MealPlanController {
 
     @Autowired
     private MealPlanService mealPlanService;
-
-    @Autowired
-    private UserAccountService userAccountService;
 
     @GetMapping("/account/{accountId}")
     public ResponseEntity<?> getMealPlans(@PathVariable Long accountId) {
@@ -49,29 +54,16 @@ public class MealPlanController {
     @PostMapping
     public ResponseEntity<?> createMealPlan(@RequestBody MealPlanDTO mealPlanDTO,
                                            @RequestParam Long accountId) {
-
-        UserAccount account = userAccountService.findById(accountId); // will throw if not found
-
-        MealPlan plan = new MealPlan();
-        plan.setAccount(account);
-        plan.setPlanName(mealPlanDTO.getPlanName());
-        plan.setPlanDate(mealPlanDTO.getPlanDate());
-
-        MealPlan saved = mealPlanService.save(plan);
-        return ResponseEntity.ok(mealPlanService.convertToDTO(saved));
+        var savedDto = mealPlanService.createForAccount(accountId, mealPlanDTO);
+        return ResponseEntity.ok(savedDto);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMealPlan(
             @PathVariable Long id,
             @RequestBody MealPlanDTO mealPlanDTO) {
-        MealPlan plan = mealPlanService.findById(id); // will throw if not found
-
-        plan.setPlanName(mealPlanDTO.getPlanName());
-        plan.setPlanDate(mealPlanDTO.getPlanDate());
-
-        MealPlan updated = mealPlanService.save(plan);
-        return ResponseEntity.ok(mealPlanService.convertToDTO(updated));
+        var updatedDto = mealPlanService.updateFromDTO(id, mealPlanDTO);
+        return ResponseEntity.ok(updatedDto);
     }
 
     @DeleteMapping("/{id}")
