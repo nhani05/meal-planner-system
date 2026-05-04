@@ -21,11 +21,11 @@ server:
     context-path: /api
 
 # JWT (dùng secret đơn giản khi test local)
-# app:
-#   jwt:
-#     secret: local-dev-secret-key-change-in-production-32chars
-#     expiration-ms: 86400000        # 1 ngày
-#     refresh-expiration-ms: 604800000  # 7 ngày
+app:
+  jwt:
+    secret: KjQwt1HL5uMkcx8KSfPWMJ3CrKpqbdPk2ymjGwV4yeJ1xNRy54yJwCrUOTMJqnEvfIMlkG9DQUkMlUVvNzG6DzKQ1/gTxO/ZKdi7bhA7g++mu4Xw5/GQwDXP/NxF5ei5oI7LjIAGN2HkhXf7QPeJGoicCoieczfQZXALkx9W+91NRYcNeyqlCN9dahvBHyB28IAT9sm1EoqQ2o/ROjl6Qn9YQq5y6GsknuOQzduNuizulOduUdSQJ04e20i8Cf7u843/Q1jVYfGtiDSWmdYoRoxGRnLOajELhqE+ruRGvFKL+tsCJ8NibsbZuuf49qfomCyfEm3lLBHCUh60RqB51A==
+    expiration-ms: 86400000        # 1 ngày
+    refresh-expiration-ms: 604800000  # 7 ngày
 
 #   # CORS: cho phép frontend dev chạy trên cổng khác
 #   cors:
