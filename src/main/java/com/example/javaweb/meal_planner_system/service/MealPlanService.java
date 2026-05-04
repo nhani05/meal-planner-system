@@ -18,4 +18,8 @@ public interface MealPlanService {
     Optional<MealPlan> findByAccountIdAndPlanDate(Long accountId, LocalDate planDate);
     MealPlanDTO convertToDTO(MealPlan mealPlan);
     void delete(Long id);
+    // Create a meal plan for an account from DTO
+    MealPlanDTO createForAccount(Long accountId, MealPlanDTO mealPlanDTO);
+    // Update an existing meal plan from DTO
+    MealPlanDTO updateFromDTO(Long id, MealPlanDTO mealPlanDTO);
 }
