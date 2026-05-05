@@ -784,6 +784,87 @@
               "raw": "{\n  \"status\": \"resolved\"\n}"
             }
           }
+        },
+        {
+          "name": "Get User By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/admin/users/1"
+          }
+        },
+        {
+          "name": "Get Admin Dishes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/admin/dishes?keyword=chicken&categoryId=1&page=0&size=20"
+          }
+        },
+        {
+          "name": "Create Admin Dish",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/admin/dishes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dish\": {\n    \"name\": \"Grilled Chicken Salad\",\n    \"categoryId\": 1,\n    \"imageUrl\": \"https://example.com/salad.jpg\",\n    \"difficulty\": \"easy\",\n    \"totalTimeMin\": 30\n  },\n  \"nutrition\": {\n    \"caloriesPer100g\": 120.50,\n    \"proteinPer100g\": 15.00,\n    \"carbPer100g\": 5.00,\n    \"fatPer100g\": 4.00\n  },\n  \"ingredients\": [\n    { \"name\": \"Chicken Breast\", \"quantityG\": 200.0, \"unit\": \"g\" },\n    { \"name\": \"Lettuce\", \"quantityG\": 100.0, \"unit\": \"g\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Admin Dish",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/admin/dishes/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dish\": {\n    \"name\": \"Updated Grilled Chicken Salad\",\n    \"categoryId\": 1,\n    \"imageUrl\": \"https://example.com/salad.jpg\",\n    \"difficulty\": \"medium\",\n    \"totalTimeMin\": 35\n  },\n  \"nutrition\": {\n    \"caloriesPer100g\": 130.00,\n    \"proteinPer100g\": 16.00,\n    \"carbPer100g\": 6.00,\n    \"fatPer100g\": 4.50\n  },\n  \"ingredients\": [\n    { \"name\": \"Chicken Breast\", \"quantityG\": 250.0, \"unit\": \"g\" },\n    { \"name\": \"Lettuce\", \"quantityG\": 100.0, \"unit\": \"g\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Admin Dish",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/admin/dishes/1"
+          }
         }
       ]
     }

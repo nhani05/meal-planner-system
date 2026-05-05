@@ -1,8 +1,6 @@
 package com.example.javaweb.meal_planner_system.service;
 
-import com.example.javaweb.meal_planner_system.dto.AdminStatsDTO;
-import com.example.javaweb.meal_planner_system.dto.FeedbackDTO;
-import com.example.javaweb.meal_planner_system.dto.UserAccountDTO;
+import com.example.javaweb.meal_planner_system.dto.*;
 import com.example.javaweb.meal_planner_system.entity.enums.FeedbackStatus;
 import com.example.javaweb.meal_planner_system.entity.enums.UserStatus;
 import org.springframework.data.domain.Page;
@@ -14,4 +12,11 @@ public interface AdminService {
     void updateUserStatus(Long userId, UserStatus status);
     Page<FeedbackDTO> getFeedbacks(FeedbackStatus status, Pageable pageable);
     void updateFeedbackStatus(Long feedbackId, FeedbackStatus status);
+
+    // Phase 5: Admin enhancements
+    UserAccountDTO getUserById(Long id);
+    Page<DishDTO> getAllDishes(String keyword, Integer categoryId, Pageable pageable);
+    DishDTO createAdminDish(AdminDishRequestDTO request);
+    DishDTO updateAdminDish(Long id, AdminDishRequestDTO request);
+    void deleteAdminDish(Long id);
 }

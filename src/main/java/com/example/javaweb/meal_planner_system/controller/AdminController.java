@@ -3,19 +3,13 @@ package com.example.javaweb.meal_planner_system.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.example.javaweb.meal_planner_system.dto.AdminDishRequestDTO;
 import com.example.javaweb.meal_planner_system.entity.enums.FeedbackStatus;
 import com.example.javaweb.meal_planner_system.entity.enums.UserStatus;
 import com.example.javaweb.meal_planner_system.service.AdminService;
+import org.springframework.data.domain.PageRequest;
 
 @RestController
 @RequestMapping("/admin")
@@ -72,5 +66,38 @@ public class AdminController {
         FeedbackStatus status = FeedbackStatus.fromValue(body.get("status"));
         adminService.updateFeedbackStatus(id, status);
         return ResponseEntity.ok().build();
+    }
+
+    // ===================== Phase 5: Admin Enhancements =====================
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.getUserById(id));
+    }
+
+    @GetMapping("/dishes")
+    public ResponseEntity<?> getDishes(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(adminService.getAllDishes(keyword, categoryId, pageable));
+    }
+
+    @PostMapping("/dishes")
+    public ResponseEntity<?> createAdminDish(@RequestBody AdminDishRequestDTO request) {
+        return ResponseEntity.ok(adminService.createAdminDish(request));
+    }
+
+    @PutMapping("/dishes/{id}")
+    public ResponseEntity<?> updateAdminDish(@PathVariable Long id, @RequestBody AdminDishRequestDTO request) {
+        return ResponseEntity.ok(adminService.updateAdminDish(id, request));
+    }
+
+    @DeleteMapping("/dishes/{id}")
+    public ResponseEntity<?> deleteAdminDish(@PathVariable Long id) {
+        adminService.deleteAdminDish(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -704,7 +704,9 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.3 `GET /admin/users/{id}` ❌ BE chưa implement
+### 14.3 `GET /admin/users/{id}` ✅ BE + FE
+
+> **Auth:** Bearer Token (Admin only)
 
 **Response 200:** (UserAccountDTO)
 
@@ -728,23 +730,66 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.7 `GET /admin/dishes?keyword=&categoryId=&page=&size=` ❌ BE chưa implement
+### 14.7 `GET /admin/dishes?keyword=&categoryId=&page=&size=` ✅ BE + FE
+
+> **Auth:** Bearer Token (Admin only)
+
+**Query Params:**
+- `keyword` — tìm kiếm theo tên món (optional)
+- `categoryId` — lọc theo danh mục (optional)
+- `page` — số trang (default: 0)
+- `size` — số lượng mỗi trang (default: 20)
 
 **Response 200:** (Paginated DishDTO list)
 
 ---
 
-### 14.8 `POST /admin/dishes` ❌ BE chưa implement
+### 14.8 `POST /admin/dishes` ✅ BE + FE
 
-**Request:** (DishDTO + NutritionInfo)
+> **Auth:** Bearer Token (Admin only)
+
+**Request:** (DishDTO + NutritionInfo + Ingredients)
+```json
+{
+  "dish": {
+    "name": "Grilled Chicken Salad",
+    "categoryId": 1,
+    "imageUrl": "https://example.com/salad.jpg",
+    "difficulty": "easy",
+    "totalTimeMin": 30
+  },
+  "nutrition": {
+    "caloriesPer100g": 120.50,
+    "proteinPer100g": 15.00,
+    "carbPer100g": 5.00,
+    "fatPer100g": 4.00
+  },
+  "ingredients": [
+    { "name": "Chicken Breast", "quantityG": 200.0, "unit": "g" },
+    { "name": "Lettuce", "quantityG": 100.0, "unit": "g" }
+  ]
+}
+```
 
 ---
 
-### 14.9 `PUT /admin/dishes/{id}` ❌ BE chưa implement
+### 14.9 `PUT /admin/dishes/{id}` ✅ BE + FE
+
+> **Auth:** Bearer Token (Admin only)
+
+**Request:** (cùng format POST — đè toàn bộ Dish + Nutrition + Ingredients)
+
+**Response 200:** (DishDTO updated)
 
 ---
 
-### 14.10 `DELETE /admin/dishes/{id}` ❌ BE chưa implement
+### 14.10 `DELETE /admin/dishes/{id}` ✅ BE + FE
+
+> **Auth:** Bearer Token (Admin only)
+
+**Response 204 No Content**
+
+**Errors:** `400` — `"Cannot delete dish: it is currently used in meal plans"`
 
 ---
 
@@ -823,6 +868,11 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 | 40 | GET | `/meal-plans/{planId}/meals` | `MealController` | `mealService.getMeals()` |
 | 41 | GET | `/meal-plan-templates` | `MealPlanTemplateController` | `mealService.getTemplates()` |
 | 42 | GET | `/ingredients` | `IngredientController` | `ingredientService.getIngredients()` |
+| 43 | GET | `/admin/users/{id}` | `AdminController` | `adminService.getUserById()` |
+| 44 | GET | `/admin/dishes` | `AdminController` | `adminService.getDishes()` |
+| 45 | POST | `/admin/dishes` | `AdminController` | `adminService.createDish()` |
+| 46 | PUT | `/admin/dishes/{id}` | `AdminController` | `adminService.updateDish()` |
+| 47 | DELETE | `/admin/dishes/{id}` | `AdminController` | `adminService.deleteDish()` |
 
 ### ✅ BE implement nhưng FE chưa gọi
 
@@ -834,16 +884,6 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 | 4 | POST | `/ingredients` | `IngredientController` |
 | 5 | PUT | `/ingredients/{id}` | `IngredientController` |
 | 6 | DELETE | `/ingredients/{id}` | `IngredientController` |
-
-### ❌ FE gọi nhưng BE chưa implement
-
-| # | Method | Endpoint | FE Service | Cần implement |
-|---|---|---|---|---|
-| 1 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
-| 2 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
-| 3 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
-| 4 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
-| 5 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
 
 ---
 
