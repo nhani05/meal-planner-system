@@ -2,10 +2,10 @@ package com.example.javaweb.meal_planner_system.controller;
 
 // Module: Controller
 
-import com.example.javaweb.meal_planner_system.dto.LoginDTO;
-import com.example.javaweb.meal_planner_system.dto.RegisterDTO;
+import com.example.javaweb.meal_planner_system.dto.*;
 import com.example.javaweb.meal_planner_system.entity.UserAccount;
 import com.example.javaweb.meal_planner_system.service.UserAccountService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +67,56 @@ public class AuthController {
     public ResponseEntity<?> getUser(@PathVariable Long id) {
         UserAccount user = userAccountService.findById(id); // will throw if not found
         return ResponseEntity.ok(userAccountService.convertToDTO(user));
+    }
+
+    // ===================== Phase 1: Auth Enhancements =====================
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // Logout is handled client-side (token removal from store)
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordDTO dto) {
+        String otp = userAccountService.generateResetToken(dto.getEmail());
+        if (otp != null) {
+            // In production, send OTP via email. For dev, we log it.
+            System.out.println("[DEV] OTP for " + dto.getEmail() + ": " + otp);
+            java.util.Map<String, String> body = new java.util.HashMap<>();
+            body.put("message", "If the email exists, an OTP has been sent");
+            body.put("devOtp", otp); // Remove this in production!
+            return ResponseEntity.ok(body);
+        }
+        return ResponseEntity.ok(java.util.Map.of("message", "If the email exists, an OTP has been sent"));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpDTO dto) {
+        userAccountService.verifyOtp(dto.getEmail(), dto.getOtp());
+        return ResponseEntity.ok(java.util.Map.of("message", "OTP verified successfully"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO dto) {
+        userAccountService.resetPassword(dto.getToken(), dto.getNewPassword());
+        return ResponseEntity.ok(java.util.Map.of("message", "Password reset successfully"));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordDTO dto,
+            HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        Long accountId = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            accountId = jwtUtil.extractUserId(token);
+        }
+        if (accountId == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        userAccountService.changePassword(accountId, dto.getOldPassword(), dto.getNewPassword());
+        return ResponseEntity.ok(java.util.Map.of("message", "Password changed successfully"));
     }
 }

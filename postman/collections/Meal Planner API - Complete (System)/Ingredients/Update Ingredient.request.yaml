@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/ingredients/1"
+method: PUT
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Chicken Breast (Large)",
+      "quantityG": 600.0
+    }
+order: 3000
