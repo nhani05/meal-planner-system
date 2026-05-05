@@ -25,6 +25,10 @@ All entities are located in `src/main/java/com/example/javaweb/meal_planner_syst
 - **Portion** - Quantity of a dish in a meal
 - **MealPlanTemplate** - Reusable meal plan templates
 
+#### Feedback & Admin Module
+- **UserFeedback** - User-submitted feedback and complaints
+- **AdminAuditLog** - Admin action logs (if applicable)
+
 ### Enumerations
 All enums are located in `src/main/java/com/example/javaweb/meal_planner_system/entity/enums/`
 
@@ -36,6 +40,7 @@ All enums are located in `src/main/java/com/example/javaweb/meal_planner_system/
 - **DishSource** - SYSTEM, CUSTOM
 - **DishDifficulty** - EASY, MEDIUM, HARD
 - **MealType** - BREAKFAST, LUNCH, DINNER, SNACK
+- **FeedbackStatus** - PENDING, PROCESSING, RESOLVED
 
 ### Data Transfer Objects (DTOs)
 All DTOs are located in `src/main/java/com/example/javaweb/meal_planner_system/dto/`
@@ -53,6 +58,11 @@ All DTOs are located in `src/main/java/com/example/javaweb/meal_planner_system/d
 - DishCategoryDTO
 - LoginDTO
 - RegisterDTO
+- MealPlanTemplateDTO
+- AdminStatsDTO
+- FeedbackDTO
+- AdminDishRequestDTO
+- ChangePasswordDTO / ForgotPasswordDTO / ResetPasswordDTO / VerifyOtpDTO
 
 ### Repositories
 All repositories are located in `src/main/java/com/example/javaweb/meal_planner_system/repository/`
