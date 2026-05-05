@@ -1,14 +1,10 @@
 package com.example.javaweb.meal_planner_system.service.impl;
 
-import com.example.javaweb.meal_planner_system.converter.FeedbackConverter;
-import com.example.javaweb.meal_planner_system.converter.UserAccountConverter;
-import com.example.javaweb.meal_planner_system.dto.AdminStatsDTO;
-import com.example.javaweb.meal_planner_system.dto.FeedbackDTO;
-import com.example.javaweb.meal_planner_system.dto.UserAccountDTO;
-import com.example.javaweb.meal_planner_system.entity.UserAccount;
-import com.example.javaweb.meal_planner_system.entity.UserFeedback;
-import com.example.javaweb.meal_planner_system.entity.enums.FeedbackStatus;
-import com.example.javaweb.meal_planner_system.entity.enums.UserStatus;
+import com.example.javaweb.meal_planner_system.converter.*;
+import com.example.javaweb.meal_planner_system.dto.*;
+import com.example.javaweb.meal_planner_system.entity.*;
+import com.example.javaweb.meal_planner_system.entity.enums.*;
+import com.example.javaweb.meal_planner_system.exception.BadRequestException;
 import com.example.javaweb.meal_planner_system.exception.ResourceNotFoundException;
 import com.example.javaweb.meal_planner_system.repository.*;
 import com.example.javaweb.meal_planner_system.service.AdminService;
@@ -16,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -33,6 +31,18 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private UserFeedbackRepository userFeedbackRepository;
+
+    @Autowired
+    private DishCategoryRepository dishCategoryRepository;
+
+    @Autowired
+    private NutritionInfoRepository nutritionInfoRepository;
+
+    @Autowired
+    private IngredientRepository ingredientRepository;
+
+    @Autowired
+    private PortionRepository portionRepository;
 
     @Override
     public AdminStatsDTO getStatistics() {
@@ -76,5 +86,163 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("Feedback not found"));
         feedback.setStatus(status);
         userFeedbackRepository.save(feedback);
+    }
+
+    // ===================== Phase 5: Admin Enhancements =====================
+
+    @Override
+    public UserAccountDTO getUserById(Long id) {
+        UserAccount user = userAccountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+        return UserAccountConverter.toDTO(user);
+    }
+
+    @Override
+    public Page<DishDTO> getAllDishes(String keyword, Integer categoryId, Pageable pageable) {
+        if (keyword != null && !keyword.isBlank() && categoryId != null) {
+            return dishRepository.findByNameContainingIgnoreCaseAndCategoryId(keyword, categoryId, pageable)
+                    .map(DishConverter::toDTO);
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            return dishRepository.findByNameContainingIgnoreCase(keyword, pageable)
+                    .map(DishConverter::toDTO);
+        }
+        if (categoryId != null) {
+            return dishRepository.findByCategoryId(categoryId, pageable)
+                    .map(DishConverter::toDTO);
+        }
+        return dishRepository.findAll(pageable)
+                .map(DishConverter::toDTO);
+    }
+
+    @Override
+    @Transactional
+    public DishDTO createAdminDish(AdminDishRequestDTO request) {
+        DishDTO dishDTO = request.getDish();
+        // Create Dish
+        Dish dish = new Dish();
+        dish.setName(dishDTO.getName());
+        dish.setImageUrl(dishDTO.getImageUrl());
+        dish.setSource(DishSource.SYSTEM);
+        if (dishDTO.getCategoryId() != null) {
+            dishCategoryRepository.findById(dishDTO.getCategoryId())
+                    .ifPresent(dish::setCategory);
+        }
+        dish.setDifficulty(dishDTO.getDifficulty());
+        dish.setTotalTimeMin(dishDTO.getTotalTimeMin());
+        Dish savedDish = dishRepository.save(dish);
+
+        // Create NutritionInfo
+        NutritionInfoDTO nutDTO = request.getNutrition();
+        if (nutDTO != null) {
+            NutritionInfo nutrition = new NutritionInfo();
+            nutrition.setDish(savedDish);
+            nutrition.setCaloriesPer100g(nutDTO.getCaloriesPer100g());
+            nutrition.setProteinPer100g(nutDTO.getProteinPer100g());
+            nutrition.setCarbPer100g(nutDTO.getCarbPer100g());
+            nutrition.setFatPer100g(nutDTO.getFatPer100g());
+            nutrition.setFiberPer100g(nutDTO.getFiberPer100g());
+            nutrition.setSatFatPer100g(nutDTO.getSatFatPer100g());
+            nutrition.setVitaminAMcg(nutDTO.getVitaminAMcg());
+            nutrition.setVitaminCMg(nutDTO.getVitaminCMg());
+            nutrition.setVitaminDMcg(nutDTO.getVitaminDMcg());
+            nutrition.setCalciumMg(nutDTO.getCalciumMg());
+            nutrition.setIronMg(nutDTO.getIronMg());
+            nutritionInfoRepository.save(nutrition);
+        }
+
+        // Create Ingredients
+        List<IngredientDTO> ingredients = request.getIngredients();
+        if (ingredients != null) {
+            for (IngredientDTO ingDTO : ingredients) {
+                Ingredient ingredient = new Ingredient();
+                ingredient.setDish(savedDish);
+                ingredient.setName(ingDTO.getName());
+                ingredient.setQuantityG(ingDTO.getQuantityG());
+                ingredient.setUnit(ingDTO.getUnit());
+                ingredientRepository.save(ingredient);
+            }
+        }
+
+        return DishConverter.toDTO(savedDish);
+    }
+
+    @Override
+    @Transactional
+    public DishDTO updateAdminDish(Long id, AdminDishRequestDTO request) {
+        Dish dish = dishRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dish not found with id " + id));
+
+        DishDTO dishDTO = request.getDish();
+        dish.setName(dishDTO.getName());
+        dish.setImageUrl(dishDTO.getImageUrl());
+        if (dishDTO.getCategoryId() != null) {
+            dishCategoryRepository.findById(dishDTO.getCategoryId())
+                    .ifPresent(dish::setCategory);
+        }
+        dish.setDifficulty(dishDTO.getDifficulty());
+        dish.setTotalTimeMin(dishDTO.getTotalTimeMin());
+        Dish savedDish = dishRepository.save(dish);
+
+        // Update NutritionInfo
+        NutritionInfoDTO nutDTO = request.getNutrition();
+        if (nutDTO != null) {
+            NutritionInfo nutrition = nutritionInfoRepository.findByDishId(id)
+                    .orElseGet(() -> {
+                        NutritionInfo n = new NutritionInfo();
+                        n.setDish(savedDish);
+                        return n;
+                    });
+            nutrition.setCaloriesPer100g(nutDTO.getCaloriesPer100g());
+            nutrition.setProteinPer100g(nutDTO.getProteinPer100g());
+            nutrition.setCarbPer100g(nutDTO.getCarbPer100g());
+            nutrition.setFatPer100g(nutDTO.getFatPer100g());
+            nutrition.setFiberPer100g(nutDTO.getFiberPer100g());
+            nutrition.setSatFatPer100g(nutDTO.getSatFatPer100g());
+            nutrition.setVitaminAMcg(nutDTO.getVitaminAMcg());
+            nutrition.setVitaminCMg(nutDTO.getVitaminCMg());
+            nutrition.setVitaminDMcg(nutDTO.getVitaminDMcg());
+            nutrition.setCalciumMg(nutDTO.getCalciumMg());
+            nutrition.setIronMg(nutDTO.getIronMg());
+            nutritionInfoRepository.save(nutrition);
+        }
+
+        // Replace Ingredients: delete old, create new
+        List<IngredientDTO> ingredients = request.getIngredients();
+        if (ingredients != null) {
+            ingredientRepository.deleteAll(ingredientRepository.findByDishId(id));
+            for (IngredientDTO ingDTO : ingredients) {
+                Ingredient ingredient = new Ingredient();
+                ingredient.setDish(savedDish);
+                ingredient.setName(ingDTO.getName());
+                ingredient.setQuantityG(ingDTO.getQuantityG());
+                ingredient.setUnit(ingDTO.getUnit());
+                ingredientRepository.save(ingredient);
+            }
+        }
+
+        return DishConverter.toDTO(savedDish);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAdminDish(Long id) {
+        Dish dish = dishRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dish not found with id " + id));
+
+        // Check if dish is used in any portions
+        List<Portion> portions = portionRepository.findByDishId(id);
+        if (!portions.isEmpty()) {
+            throw new BadRequestException("Cannot delete dish: it is currently used in meal plans");
+        }
+
+        // Delete related entities first
+        nutritionInfoRepository.findByDishId(id).ifPresent(nutritionInfoRepository::delete);
+        List<Ingredient> ingredients = ingredientRepository.findByDishId(id);
+        if (!ingredients.isEmpty()) {
+            ingredientRepository.deleteAll(ingredients);
+        }
+
+        dishRepository.delete(dish);
     }
 }

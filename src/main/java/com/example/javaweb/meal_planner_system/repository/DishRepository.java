@@ -2,6 +2,8 @@ package com.example.javaweb.meal_planner_system.repository;
 
 import com.example.javaweb.meal_planner_system.entity.Dish;
 import com.example.javaweb.meal_planner_system.entity.enums.DishSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,8 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
     List<Dish> findByAccountId(Long accountId);
     List<Dish> findBySourceAndAccountId(DishSource source, Long accountId);
     boolean existsByName(String name);
+
+    Page<Dish> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Dish> findByNameContainingIgnoreCaseAndCategoryId(String name, Integer categoryId, Pageable pageable);
+    Page<Dish> findByCategoryId(Integer categoryId, Pageable pageable);
 }

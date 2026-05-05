@@ -62,7 +62,7 @@ Khi thêm hoặc cập nhật `Portion`, Backend phải:
 | **Giai đoạn 1** | Health Goal, Categories, Ingredients (cơ bản) | ✅ Hoàn thành |
 | **Giai đoạn 2** | Ratings, Favorites | ✅ Hoàn thành |
 | **Giai đoạn 3** | Portions (tính toán dinh dưỡng) | ✅ Hoàn thành |
-| **Giai đoạn 4** | Admin module (stats, users, feedbacks) | 🟡 Một phần |
+| **Giai đoạn 4** | Admin module (stats, users, feedbacks) | ✅ Hoàn thành |
 
 ## Các endpoint / tính năng còn thiếu cần triển khai
 
@@ -76,9 +76,11 @@ Khi thêm hoặc cập nhật `Portion`, Backend phải:
 ### Ingredients ✅ Hoàn thành
 - ✅ `GET /ingredients` với phân trang (`page`, `size`) và tìm kiếm (`search`) — `IngredientController`
 
-### Admin
-- `GET /admin/users/{id}`
-- `GET /admin/dishes` (phân trang, lọc)
-- `POST /admin/dishes`
-- `PUT /admin/dishes/{id}`
-- `DELETE /admin/dishes/{id}`
+### Admin ✅ Hoàn thành
+- ✅ `GET /admin/users/{id}` — `AdminController`
+- ✅ `GET /admin/dishes` (phân trang, lọc theo keyword + categoryId) — `AdminController`
+- ✅ `POST /admin/dishes` (tạo Dish + NutritionInfo + Ingredients) — `AdminController`
+- ✅ `PUT /admin/dishes/{id}` (cập nhật toàn bộ) — `AdminController`
+- ✅ `DELETE /admin/dishes/{id}` (kiểm tra portions trước khi xóa) — `AdminController`
+
+> **Tất cả backend endpoints đã được triển khai hoàn chỉnh!**
