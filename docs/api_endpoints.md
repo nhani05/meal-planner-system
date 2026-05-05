@@ -461,11 +461,26 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ## 9. Ingredients — Nguyên liệu
 
-> **Lưu ý:** BE đã implement CRUD cơ bản nhưng chưa hỗ trợ phân trang / tìm kiếm.
+### 9.1 `GET /ingredients` — Query: `{ page, size, search }` ✅ BE + FE
 
-### 9.1 `GET /ingredients` — Query: `{ page, size, search }` ❌ BE chưa implement
+> **Auth:** Bearer Token
 
-> BE chưa có endpoint liệt kê toàn bộ nguyên liệu với phân trang.
+**Query Params:**
+- `page` — số trang (default: 0)
+- `size` — số lượng mỗi trang (default: 20)
+- `search` — tìm kiếm theo tên (optional, case-insensitive)
+
+**Response 200:** (Paginated IngredientDTO)
+```json
+{
+  "content": [
+    { "id": 1, "dishId": 5, "name": "Chicken Breast", "quantityG": 500.0, "unit": "g" }
+  ],
+  "pageable": { "pageNumber": 0, "pageSize": 20 },
+  "totalElements": 1,
+  "totalPages": 1
+}
+```
 
 ### 9.2 `GET /ingredients/{id}` ✅ BE only
 
@@ -807,6 +822,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 | 39 | GET | `/meal-plans/{id}` | `MealPlanController` | `mealService.getMealPlanById()` |
 | 40 | GET | `/meal-plans/{planId}/meals` | `MealController` | `mealService.getMeals()` |
 | 41 | GET | `/meal-plan-templates` | `MealPlanTemplateController` | `mealService.getTemplates()` |
+| 42 | GET | `/ingredients` | `IngredientController` | `ingredientService.getIngredients()` |
 
 ### ✅ BE implement nhưng FE chưa gọi
 
@@ -823,12 +839,11 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 | # | Method | Endpoint | FE Service | Cần implement |
 |---|---|---|---|---|
-| 1 | GET | `/ingredients` | `ingredientService.getIngredients()` | `IngredientController` |
-| 2 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
-| 3 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
-| 4 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
-| 5 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
-| 6 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
+| 1 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
+| 2 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
+| 3 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
+| 4 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
+| 5 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
 
 ---
 

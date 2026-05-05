@@ -9,6 +9,8 @@ import com.example.javaweb.meal_planner_system.repository.IngredientRepository;
 import com.example.javaweb.meal_planner_system.service.DishService;
 import com.example.javaweb.meal_planner_system.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,5 +61,17 @@ public class IngredientServiceImpl implements IngredientService {
             throw new ResourceNotFoundException("Ingredient not found with id " + id);
         }
         ingredientRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<IngredientDTO> findAll(Pageable pageable) {
+        return ingredientRepository.findAll(pageable)
+                .map(IngredientConverter::toDTO);
+    }
+
+    @Override
+    public Page<IngredientDTO> searchByName(String name, Pageable pageable) {
+        return ingredientRepository.findByNameContainingIgnoreCase(name, pageable)
+                .map(IngredientConverter::toDTO);
     }
 }

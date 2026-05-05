@@ -3,6 +3,8 @@ package com.example.javaweb.meal_planner_system.controller;
 import com.example.javaweb.meal_planner_system.dto.IngredientDTO;
 import com.example.javaweb.meal_planner_system.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,18 @@ public class IngredientController {
     public ResponseEntity<?> updateIngredient(@PathVariable Long id, @RequestBody IngredientDTO ingredientDTO) {
         ingredientDTO.setId(id);
         return ResponseEntity.ok(ingredientService.save(ingredientDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getIngredients(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size,
+            @RequestParam(required = false) String search) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (search != null && !search.isBlank()) {
+            return ResponseEntity.ok(ingredientService.searchByName(search, pageable));
+        }
+        return ResponseEntity.ok(ingredientService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
