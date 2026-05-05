@@ -68,10 +68,10 @@ Khi thêm hoặc cập nhật `Portion`, Backend phải:
 
 ### Auth ✅ Đã hoàn thành (05/05/2026)
 
-### Meal Plans
-- `GET /meal-plans/{id}` (lấy theo ID)
-- `GET /meal-plans/{planId}/meals` (liệt kê bữa ăn)
-- `GET /meal-plan-templates` (mẫu kế hoạch)
+### Meal Plans 🟡 Một phần
+- ✅ `GET /meal-plans/{id}` (lấy theo ID) — `MealPlanController`
+- ✅ `GET /meal-plans/{planId}/meals` (liệt kê bữa ăn) — `MealController`
+- ❌ `GET /meal-plan-templates` (mẫu kế hoạch)
 
 ### Ingredients
 - `GET /ingredients` với phân trang và tìm kiếm

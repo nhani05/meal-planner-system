@@ -34,6 +34,12 @@ public class MealPlanController {
     @Autowired
     private MealPlanService mealPlanService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMealPlanById(@PathVariable Long id) {
+        MealPlan plan = mealPlanService.findById(id);
+        return ResponseEntity.ok(mealPlanService.convertToDTO(plan));
+    }
+
     @GetMapping("/account/{accountId}")
     public ResponseEntity<?> getMealPlans(@PathVariable Long accountId) {
         List<MealPlan> plans = mealPlanService.findByAccountId(accountId);
