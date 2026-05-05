@@ -73,8 +73,8 @@ Khi thêm hoặc cập nhật `Portion`, Backend phải:
 - ✅ `GET /meal-plans/{planId}/meals` (liệt kê bữa ăn) — `MealController`
 - ✅ `GET /meal-plan-templates` (mẫu kế hoạch) — `MealPlanTemplateController`
 
-### Ingredients
-- `GET /ingredients` với phân trang và tìm kiếm
+### Ingredients ✅ Hoàn thành
+- ✅ `GET /ingredients` với phân trang (`page`, `size`) và tìm kiếm (`search`) — `IngredientController`
 
 ### Admin
 - `GET /admin/users/{id}`
