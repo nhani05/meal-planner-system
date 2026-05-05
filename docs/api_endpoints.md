@@ -641,7 +641,9 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ## 13. Meal Plan Templates
 
-### 13.1 `GET /meal-plan-templates?accountId={id}` ❌ BE chưa implement
+### 13.1 `GET /meal-plan-templates?accountId={id}` ✅ BE + FE
+
+> **Auth:** Bearer Token
 
 **Response 200:**
 ```json
@@ -804,6 +806,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 | 38 | PUT | `/auth/change-password` | `AuthController` | `authService.changePassword()` |
 | 39 | GET | `/meal-plans/{id}` | `MealPlanController` | `mealService.getMealPlanById()` |
 | 40 | GET | `/meal-plans/{planId}/meals` | `MealController` | `mealService.getMeals()` |
+| 41 | GET | `/meal-plan-templates` | `MealPlanTemplateController` | `mealService.getTemplates()` |
 
 ### ✅ BE implement nhưng FE chưa gọi
 
@@ -820,13 +823,12 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 | # | Method | Endpoint | FE Service | Cần implement |
 |---|---|---|---|---|
-| 1 | GET | `/meal-plan-templates` | `mealService.getTemplates()` | `TemplateController` |
-| 2 | GET | `/ingredients` | `ingredientService.getIngredients()` | `IngredientController` |
-| 3 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
-| 4 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
-| 5 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
-| 6 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
-| 7 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
+| 1 | GET | `/ingredients` | `ingredientService.getIngredients()` | `IngredientController` |
+| 2 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
+| 3 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
+| 4 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
+| 5 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
+| 6 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
 
 ---
 

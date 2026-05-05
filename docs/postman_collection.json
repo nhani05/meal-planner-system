@@ -481,6 +481,19 @@
           }
         },
         {
+          "name": "Get Meal Plan Templates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/meal-plan-templates?accountId=1"
+          }
+        },
+        {
           "name": "Update Meal Plan",
           "request": {
             "method": "PUT",
