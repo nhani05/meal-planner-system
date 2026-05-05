@@ -1,6 +1,0 @@
-$kind: http-request
-url: "{{baseUrl}}/admin/users/2/unlock"
-method: PATCH
-headers:
-  Authorization: Bearer {{token}}
-order: 4000

@@ -1,6 +1,0 @@
-$kind: http-request
-url: "{{baseUrl}}/meal-plans/account/1/date/2026-05-04"
-method: GET
-headers:
-  Authorization: Bearer {{token}}
-order: 3000
