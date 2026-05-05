@@ -517,9 +517,20 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 10.3 `GET /meal-plans/{id}` ❌ BE chưa implement
+### 10.3 `GET /meal-plans/{id}` ✅ BE + FE
 
-FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
+> **Auth:** Bearer Token
+
+**Response 200:** (MealPlanDTO)
+```json
+{
+  "id": 1,
+  "planName": "Gym Diet Plan",
+  "planDate": "2026-05-04"
+}
+```
+
+**Errors:** `404` — `"MealPlan not found with id {id}"`
 
 ---
 
@@ -559,7 +570,9 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 > **Endpoint trung gian được dùng trong Portions**
 
-### 11.1 `GET /meal-plans/{planId}/meals` ❌ BE chưa implement
+### 11.1 `GET /meal-plans/{planId}/meals` ✅ BE + FE
+
+> **Auth:** Bearer Token
 
 **Response 200:**
 ```json
@@ -789,6 +802,8 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 | 36 | POST | `/auth/verify-otp` | `AuthController` | `authService.verifyOtp()` |
 | 37 | POST | `/auth/reset-password` | `AuthController` | `authService.resetPassword()` |
 | 38 | PUT | `/auth/change-password` | `AuthController` | `authService.changePassword()` |
+| 39 | GET | `/meal-plans/{id}` | `MealPlanController` | `mealService.getMealPlanById()` |
+| 40 | GET | `/meal-plans/{planId}/meals` | `MealController` | `mealService.getMeals()` |
 
 ### ✅ BE implement nhưng FE chưa gọi
 
@@ -805,15 +820,13 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 | # | Method | Endpoint | FE Service | Cần implement |
 |---|---|---|---|---|
-| 1 | GET | `/meal-plans/{id}` | `mealService.getMealPlanById()` | `MealPlanController` |
-| 2 | GET | `/meal-plans/{planId}/meals` | `mealService.getMeals()` | `MealController` |
-| 3 | GET | `/meal-plan-templates` | `mealService.getTemplates()` | `TemplateController` |
-| 4 | GET | `/ingredients` | `ingredientService.getIngredients()` | `IngredientController` |
-| 5 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
-| 6 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
-| 7 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
-| 8 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
-| 9 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
+| 1 | GET | `/meal-plan-templates` | `mealService.getTemplates()` | `TemplateController` |
+| 2 | GET | `/ingredients` | `ingredientService.getIngredients()` | `IngredientController` |
+| 3 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
+| 4 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
+| 5 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
+| 6 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
+| 7 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
 
 ---
 
