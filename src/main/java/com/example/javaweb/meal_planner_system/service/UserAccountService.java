@@ -17,4 +17,10 @@ public interface UserAccountService {
     UserAccountDTO convertToDTO(UserAccount userAccount);
     boolean usernameExists(String username);
     boolean emailExists(String email);
+
+    // Phase 1: Auth enhancements
+    String generateResetToken(String email);
+    void verifyOtp(String email, String otp);
+    void resetPassword(String token, String newPassword);
+    void changePassword(Long accountId, String oldPassword, String newPassword);
 }

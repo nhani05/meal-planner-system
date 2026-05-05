@@ -72,6 +72,8 @@ Spring Data JPA repositories with custom query methods:
 - MealRepository
 - PortionRepository
 - MealPlanTemplateRepository
+- UserFeedbackRepository
+- AdminAuditLogRepository
 
 ### Services
 All services are located in `src/main/java/com/example/javaweb/meal_planner_system/service/`
@@ -79,8 +81,16 @@ All services are located in `src/main/java/com/example/javaweb/meal_planner_syst
 **Service Interfaces:**
 - UserAccountService
 - HealthProfileService
+- HealthGoalService
 - DishService
+- DishCategoryService
+- DishRatingService
+- FavoriteDishService
+- IngredientService
 - MealPlanService
+- MealService
+- PortionService
+- AdminService
 
 **Service Implementations:**
 Located in `service/impl/` package
@@ -90,8 +100,15 @@ All controllers are located in `src/main/java/com/example/javaweb/meal_planner_s
 
 - **AuthController** - User authentication endpoints
 - **HealthProfileController** - Health profile management
+- **HealthGoalController** - Health goal management
 - **DishController** - Dish management
+- **DishCategoryController** - Dish category management
+- **DishRatingController** - Dish rating endpoints
+- **FavoriteDishController** - Favorite dishes management
+- **IngredientController** - Ingredient management
 - **MealPlanController** - Meal plan management
+- **PortionController** - Portion management within meals
+- **AdminController** - Admin dashboard and management
 
 ### Configuration
 Located in `src/main/java/com/example/javaweb/meal_planner_system/config/`
@@ -113,15 +130,47 @@ GET    /api/health-profile/{accountId}     - Get health profile
 POST   /api/health-profile/{accountId}     - Create/update health profile
 ```
 
+### Health Goal Endpoints
+```
+GET    /api/health-goal/{accountId}        - Get health goal
+POST   /api/health-goal/{accountId}        - Create/update health goal
+```
+
 ### Dish Management Endpoints
 ```
-GET    /api/dishes                 - Get all dishes
-GET    /api/dishes/{id}            - Get dish by ID
-GET    /api/dishes/system          - Get system dishes
-GET    /api/dishes/account/{accountId}    - Get user's custom dishes
-POST   /api/dishes                 - Create new dish
-PUT    /api/dishes/{id}            - Update dish
-DELETE /api/dishes/{id}            - Delete dish
+GET    /api/dishes                         - Get all dishes
+GET    /api/dishes/{id}                    - Get dish by ID
+GET    /api/dishes/system                  - Get system dishes
+GET    /api/dishes/account/{accountId}     - Get user's custom dishes
+POST   /api/dishes                         - Create new dish
+PUT    /api/dishes/{id}                    - Update dish
+DELETE /api/dishes/{id}                    - Delete dish
+```
+
+### Dish Category Endpoints
+```
+GET    /api/dish-categories                - Get all categories
+```
+
+### Dish Rating Endpoints
+```
+POST   /api/dishes/{dishId}/ratings        - Rate a dish
+GET    /api/dishes/{dishId}/ratings        - Get ratings for a dish
+```
+
+### Favorite Endpoints
+```
+GET    /api/favorites/account/{accountId}             - Get user's favorites
+POST   /api/favorites/account/{accountId}/{dishId}    - Add favorite
+DELETE /api/favorites/account/{accountId}/{dishId}    - Remove favorite
+```
+
+### Ingredient Endpoints
+```
+POST   /api/ingredients                    - Create ingredient
+PUT    /api/ingredients/{id}               - Update ingredient
+GET    /api/ingredients/{id}               - Get ingredient by ID
+DELETE /api/ingredients/{id}               - Delete ingredient
 ```
 
 ### Meal Plan Endpoints
@@ -131,6 +180,24 @@ GET    /api/meal-plans/account/{accountId}/date/{date} - Get meal plan for speci
 POST   /api/meal-plans                                 - Create meal plan
 PUT    /api/meal-plans/{id}                            - Update meal plan
 DELETE /api/meal-plans/{id}                            - Delete meal plan
+```
+
+### Portion Endpoints
+```
+POST   /api/meal-plans/{planId}/meals/{mealType}/portions              - Add portion
+PUT    /api/meal-plans/{planId}/meals/{mealType}/portions/{portionId} - Update portion
+DELETE /api/meal-plans/{planId}/meals/{mealType}/portions/{portionId} - Delete portion
+```
+
+### Admin Endpoints
+```
+GET    /api/admin/statistics               - Get dashboard statistics
+GET    /api/admin/users                    - List users with pagination
+PATCH  /api/admin/users/{id}/lock          - Lock user account
+PATCH  /api/admin/users/{id}/unlock        - Unlock user account
+DELETE /api/admin/users/{id}               - Soft delete user
+GET    /api/admin/feedbacks                - List feedbacks
+PATCH  /api/admin/feedbacks/{id}/status    - Update feedback status
 ```
 
 ## Entity Relationships
@@ -198,7 +265,7 @@ mysql -u username -p database_name < meal_planner_schema.sql
 
 ## Future Enhancements
 
-- [ ] JWT token-based authentication
+- [x] JWT token-based authentication
 - [ ] Advanced meal plan recommendations
 - [ ] Recipe suggestions based on nutritional goals
 - [ ] Calorie tracking and analytics
@@ -206,3 +273,6 @@ mysql -u username -p database_name < meal_planner_schema.sql
 - [ ] Push notifications for meal reminders
 - [ ] Social features (share recipes, meal plans)
 - [ ] Advanced search and filtering
+- [ ] Admin dish management endpoints (CRUD under /admin/dishes)
+- [ ] Meal plan template endpoints
+- [ ] List all ingredients with pagination/search

@@ -1,50 +1,53 @@
 # Chiến lược triển khai API Endpoints còn thiếu
 
-Triển khai toàn bộ các endpoint được liệt kê trong tài liệu [API Endpoints](file:///C:/Users/lexua/.gemini/antigravity/brain/f2410cb5-a81f-46bd-897c-e40f0f9d05b5/api_endpoints.md) theo mô hình 3 lớp.
+Triển khai toàn bộ các endpoint được liệt kê trong tài liệu [API Endpoints](api_endpoints.md) theo mô hình 3 lớp.
 
 ## Phân nhóm triển khai
 
-### Nhóm 1: Health Goal & Dish Category
-- **Health Goal:** Lưu và lấy mục tiêu dinh dưỡng theo `accountId`.
-- **Dish Category:** Lấy danh sách danh mục món ăn để FE hiển thị bộ lọc.
+### Nhóm 1: Health Goal & Dish Category ✅ Hoàn thành
+- **Health Goal:** `HealthGoalController` + `HealthGoalServiceImpl` đã triển khai. Lưu và lấy mục tiêu dinh dưỡng theo `accountId`.
+- **Dish Category:** `DishCategoryController` + `DishCategoryServiceImpl` đã triển khai. Lấy danh sách danh mục món ăn.
 
-### Nhóm 2: Dish Interaction (Ratings & Favorites)
-- **Dish Rating:** Cho phép người dùng đánh giá món ăn (score, comment).
-- **Favorites:** Thêm/Xóa món ăn vào danh sách yêu thích của người dùng.
+### Nhóm 2: Dish Interaction (Ratings & Favorites) ✅ Hoàn thành
+- **Dish Rating:** `DishRatingController` + `DishRatingServiceImpl` đã triển khai. Cho phép người dùng đánh giá món ăn (score, comment).
+- **Favorites:** `FavoriteDishController` + `FavoriteDishServiceImpl` đã triển khai. Thêm/Xóa món ăn yêu thích.
 
-### Nhóm 3: Ingredients & Meal/Portions
-- **Ingredients:** Quản lý nguyên liệu (thêm/sửa/xóa).
-- **Meal & Portions:** Đây là phần quan trọng nhất để kế hoạch bữa ăn có dữ liệu chi tiết. Cần xử lý logic tính toán dinh dưỡng tự động khi thêm khẩu phần.
+### Nhóm 3: Ingredients & Meal/Portions 🟡 Một phần
+- **Ingredients:** `IngredientController` + `IngredientServiceImpl` đã triển khai CRUD cơ bản (theo ID). **Còn thiếu:** `GET /ingredients` với phân trang/tìm kiếm.
+- **Meal & Portions:** `PortionController` + `PortionServiceImpl` đã triển khai. Tự động tính dinh dưỡng khi thêm/cập nhật khẩu phần và tạo `Meal` nếu chưa tồn tại. **Còn thiếu:** `GET /meal-plans/{planId}/meals`.
 
-### Nhóm 4: Admin & Feedback
-- Triển khai `UserFeedback` và `AdminAuditLog` (cần tạo Entity/Repository mới).
-- Thống kê (Dashboard stats).
-- Quản lý người dùng (Lock/Unlock/Soft Delete).
+### Nhóm 4: Admin & Feedback 🟡 Một phần
+- `UserFeedback` entity/repository, `AdminAuditLog` entity/repository đã tạo.
+- `AdminController` + `AdminServiceImpl` đã triển khai: Thống kê, Quản lý users (lock/unlock/soft delete), Quản lý feedbacks.
+- **Còn thiếu:** CRUD món ăn dưới `/admin/dishes` và `GET /admin/users/{id}`.
 
----
-
-## Danh sách file cần tạo/chỉnh sửa
-
-### [NEW] Entities & Repositories
-- `UserFeedback.java` & `UserFeedbackRepository.java`
-- `AdminAuditLog.java` & `AdminAuditLogRepository.java`
-
-### [NEW] DTOs (nếu thiếu)
-- `FeedbackDTO.java`
-- `AdminStatsDTO.java`
-
-### [NEW] Services & Controllers
-1. **HealthGoalService** & `HealthGoalController`
-2. **DishCategoryService** & `DishCategoryController`
-3. **DishRatingService** & `DishRatingController`
-4. **FavoriteDishService** & `FavoriteDishController`
-5. **IngredientService** & `IngredientController`
-6. **PortionService** & `PortionController`
-7. **AdminService** & `AdminController`
+### Nhóm 5: Auth bổ sung ✅ Hoàn thành
+- `POST /auth/logout`, `POST /auth/forgot-password`, `POST /auth/verify-otp`, `POST /auth/reset-password`, `PUT /auth/change-password` đã triển khai trong `AuthController` + `UserAccountServiceImpl`.
 
 ---
 
-## Logic xử lý quan trọng (Portions)
+## Danh sách file đã tạo/chỉnh sửa
+
+### Entities & Repositories (đã tạo)
+- `UserFeedback.java` & `UserFeedbackRepository.java` ✅
+- `AdminAuditLog.java` & `AdminAuditLogRepository.java` ✅
+
+### DTOs (đã tạo)
+- `FeedbackDTO.java` ✅
+- `AdminStatsDTO.java` ✅
+
+### Services & Controllers (đã triển khai)
+1. **HealthGoalService** & `HealthGoalController` ✅
+2. **DishCategoryService** & `DishCategoryController` ✅
+3. **DishRatingService** & `DishRatingController` ✅
+4. **FavoriteDishService** & `FavoriteDishController` ✅
+5. **IngredientService** & `IngredientController` ✅ (cơ bản)
+6. **PortionService** & `PortionController` ✅
+7. **AdminService** & `AdminController` ✅ (một phần)
+
+---
+
+## Logic xử lý quan trọng (Portions) ✅ Đã hoàn thành
 Khi thêm hoặc cập nhật `Portion`, Backend phải:
 1. Lấy `NutritionInfo` của món ăn tương ứng.
 2. Tính toán `caloriesKcal`, `proteinG`, `carbG`, `fatG` dựa trên `quantityG` và giá trị dinh dưỡng trên 100g.
@@ -53,11 +56,29 @@ Khi thêm hoặc cập nhật `Portion`, Backend phải:
 ---
 
 ## Kế hoạch thực hiện
-1. **Giai đoạn 1:** Triển khai các dịch vụ đơn giản (Health Goal, Categories, Ingredients).
-2. **Giai đoạn 2:** Triển khai Interaction (Ratings, Favorites).
-3. **Giai đoạn 3:** Triển khai Portions (Logic tính toán phức tạp).
-4. **Giai đoạn 4:** Triển khai Admin module.
 
-## Xác nhận từ người dùng
-> [!IMPORTANT]
-> Tôi sẽ bắt đầu triển khai theo từng nhóm. Bạn có muốn ưu tiên nhóm nào cụ thể không, hay tôi cứ thực hiện theo thứ tự trên?
+| Giai đoạn | Nội dung | Trạng thái |
+|---|---|---|
+| **Giai đoạn 1** | Health Goal, Categories, Ingredients (cơ bản) | ✅ Hoàn thành |
+| **Giai đoạn 2** | Ratings, Favorites | ✅ Hoàn thành |
+| **Giai đoạn 3** | Portions (tính toán dinh dưỡng) | ✅ Hoàn thành |
+| **Giai đoạn 4** | Admin module (stats, users, feedbacks) | 🟡 Một phần |
+
+## Các endpoint / tính năng còn thiếu cần triển khai
+
+### Auth ✅ Đã hoàn thành (05/05/2026)
+
+### Meal Plans
+- `GET /meal-plans/{id}` (lấy theo ID)
+- `GET /meal-plans/{planId}/meals` (liệt kê bữa ăn)
+- `GET /meal-plan-templates` (mẫu kế hoạch)
+
+### Ingredients
+- `GET /ingredients` với phân trang và tìm kiếm
+
+### Admin
+- `GET /admin/users/{id}`
+- `GET /admin/dishes` (phân trang, lọc)
+- `POST /admin/dishes`
+- `PUT /admin/dishes/{id}`
+- `DELETE /admin/dishes/{id}`

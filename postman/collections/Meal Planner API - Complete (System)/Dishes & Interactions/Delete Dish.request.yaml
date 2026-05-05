@@ -1,5 +1,5 @@
 $kind: http-request
-url: "{{baseUrl}}/meal-plans/1/meals/breakfast/portions/1"
+url: "{{baseUrl}}/dishes/1"
 method: DELETE
 headers:
   Authorization: Bearer {{token}}

@@ -1,6 +1,6 @@
 $kind: http-request
-url: "{{baseUrl}}/favorites/account/1"
+url: "{{baseUrl}}/dishes/1"
 method: GET
 headers:
   Authorization: Bearer {{token}}
-order: 12000
+order: 3000

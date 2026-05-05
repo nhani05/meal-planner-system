@@ -134,33 +134,79 @@
 
 ---
 
-### 2.4 `POST /auth/logout` ⚠️ FE only — BE chưa implement
+### 2.4 `POST /auth/logout` ✅ BE + FE
 
-FE gọi `api.post('/auth/logout')` — BE không có endpoint này. Logout xử lý client-side (xóa token).
+> **Auth:** Không yêu cầu (client-side token removal)
+
+Logout xử lý client-side (xóa token khỏi store). BE trả `200 OK` xác nhận.
+
+**Response 200:**
+```json
+{ "message": "Logged out successfully" }
+```
 
 ---
 
-### 2.5 `POST /auth/forgot-password` ⚠️ FE only — BE chưa implement
+### 2.5 `POST /auth/forgot-password` ✅ BE + FE
+
+> **Auth:** Không yêu cầu
 
 **Request:** `{ "email": "user@example.com" }`
 
+**Response 200:**
+```json
+{
+  "message": "If the email exists, an OTP has been sent",
+  "devOtp": "123456"
+}
+```
+
+> **Lưu ý:** `devOtp` chỉ có trong môi trường dev. Production sẽ gửi OTP qua email.
+
 ---
 
-### 2.6 `POST /auth/verify-otp` ⚠️ FE only — BE chưa implement
+### 2.6 `POST /auth/verify-otp` ✅ BE + FE
+
+> **Auth:** Không yêu cầu
 
 **Request:** `{ "email": "user@example.com", "otp": "123456" }`
 
+**Response 200:**
+```json
+{ "message": "OTP verified successfully" }
+```
+
+**Errors:** `400` — `"Invalid email or OTP"` / `"OTP has expired"`
+
 ---
 
-### 2.7 `POST /auth/reset-password` ⚠️ FE only — BE chưa implement
+### 2.7 `POST /auth/reset-password` ✅ BE + FE
 
-**Request:** `{ "token": "...", "newPassword": "NewP@ss" }`
+> **Auth:** Không yêu cầu
+
+**Request:** `{ "token": "123456", "newPassword": "NewP@ss" }`
+
+**Response 200:**
+```json
+{ "message": "Password reset successfully" }
+```
+
+**Errors:** `400` — `"Invalid token"` / `"Token has expired"` / `"Token has already been used"`
 
 ---
 
-### 2.8 `PUT /auth/change-password` ⚠️ FE only — BE chưa implement
+### 2.8 `PUT /auth/change-password` ✅ BE + FE
+
+> **Auth:** Bearer Token
 
 **Request:** `{ "oldPassword": "...", "newPassword": "..." }`
+
+**Response 200:**
+```json
+{ "message": "Password changed successfully" }
+```
+
+**Errors:** `400` — `"Old password is incorrect"`
 
 ---
 
@@ -209,7 +255,7 @@ FE gọi `api.post('/auth/logout')` — BE không có endpoint này. Logout xử
 
 ## 4. Health Goal
 
-### 4.1 `GET /health-goal/{accountId}` ⚠️ FE only — BE chưa implement
+### 4.1 `GET /health-goal/{accountId}` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -227,7 +273,7 @@ FE gọi `api.post('/auth/logout')` — BE không có endpoint này. Logout xử
 
 ---
 
-### 4.2 `POST /health-goal/{accountId}` ⚠️ FE only — BE chưa implement
+### 4.2 `POST /health-goal/{accountId}` ✅ BE + FE
 
 **Request:**
 ```json
@@ -276,7 +322,7 @@ FE gọi `api.post('/auth/logout')` — BE không có endpoint này. Logout xử
 
 **Response 200:** (1 DishDTO — cùng format trên)
 
-**Errors:** `404` — `"Dish not found with id {id}"`
+**Errors:** `404` — `"Dish not found with id {id}"`MA
 
 ---
 
@@ -337,7 +383,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ## 6. Dish Categories
 
-### 6.1 `GET /dish-categories` ⚠️ FE only — BE chưa implement
+### 6.1 `GET /dish-categories` ✅ BE + FE
 
 **Response 200 (expected):**
 ```json
@@ -351,7 +397,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ## 7. Dish Ratings
 
-### 7.1 `POST /dishes/{dishId}/ratings` ⚠️ FE only — BE chưa implement
+### 7.1 `POST /dishes/{dishId}/ratings` ✅ BE + FE
 
 **Request:**
 ```json
@@ -363,7 +409,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 7.2 `GET /dishes/{dishId}/ratings` ⚠️ FE only — BE chưa implement
+### 7.2 `GET /dishes/{dishId}/ratings` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -382,7 +428,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ## 8. Favorites — Yêu thích
 
-### 8.1 `GET /favorites/account/{accountId}` ⚠️ FE only — BE chưa implement
+### 8.1 `GET /favorites/account/{accountId}` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -401,13 +447,13 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 8.2 `POST /favorites/account/{accountId}/{dishId}` ⚠️ FE only — BE chưa implement
+### 8.2 `POST /favorites/account/{accountId}/{dishId}` ✅ BE + FE
 
 **Response 200:** (Thành công)
 
 ---
 
-### 8.3 `DELETE /favorites/account/{accountId}/{dishId}` ⚠️ FE only — BE chưa implement
+### 8.3 `DELETE /favorites/account/{accountId}/{dishId}` ✅ BE + FE
 
 **Response 204 No Content**
 
@@ -415,13 +461,19 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ## 9. Ingredients — Nguyên liệu
 
-> **Tất cả đều ⚠️ FE only — BE chưa implement**
+> **Lưu ý:** BE đã implement CRUD cơ bản nhưng chưa hỗ trợ phân trang / tìm kiếm.
 
-### 9.1 `GET /ingredients` — Query: `{ page, size, search }`
-### 9.2 `GET /ingredients/{id}`
-### 9.3 `POST /ingredients` — Body: `IngredientDTO`
-### 9.4 `PUT /ingredients/{id}` — Body: `IngredientDTO`
-### 9.5 `DELETE /ingredients/{id}`
+### 9.1 `GET /ingredients` — Query: `{ page, size, search }` ❌ BE chưa implement
+
+> BE chưa có endpoint liệt kê toàn bộ nguyên liệu với phân trang.
+
+### 9.2 `GET /ingredients/{id}` ✅ BE only
+
+### 9.3 `POST /ingredients` ✅ BE only
+
+### 9.4 `PUT /ingredients/{id}` ✅ BE only
+
+### 9.5 `DELETE /ingredients/{id}` ✅ BE only
 
 **IngredientDTO format:**
 ```json
@@ -465,7 +517,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 10.3 `GET /meal-plans/{id}` ⚠️ FE only — BE chưa implement
+### 10.3 `GET /meal-plans/{id}` ❌ BE chưa implement
 
 FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
@@ -507,7 +559,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 > **Endpoint trung gian được dùng trong Portions**
 
-### 11.1 `GET /meal-plans/{planId}/meals` ⚠️ BE chưa implement
+### 11.1 `GET /meal-plans/{planId}/meals` ❌ BE chưa implement
 
 **Response 200:**
 ```json
@@ -529,7 +581,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ## 12. Portions — Khẩu phần
 
-### 12.1 `POST /meal-plans/{planId}/meals/{mealType}/portions` ⚠️ FE only — BE chưa implement
+### 12.1 `POST /meal-plans/{planId}/meals/{mealType}/portions` ✅ BE + FE
 
 **Request:**
 ```json
@@ -555,7 +607,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ---
 
-### 12.2 `PUT /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ⚠️ FE only — BE chưa implement
+### 12.2 `PUT /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ✅ BE + FE
 
 **Request:**
 ```json
@@ -568,7 +620,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ---
 
-### 12.3 `DELETE /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ⚠️ FE only — BE chưa implement
+### 12.3 `DELETE /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ✅ BE + FE
 
 **Response 204 No Content**
 
@@ -576,7 +628,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ## 13. Meal Plan Templates
 
-### 13.1 `GET /meal-plan-templates?accountId={id}` ⚠️ FE only — BE chưa implement
+### 13.1 `GET /meal-plan-templates?accountId={id}` ❌ BE chưa implement
 
 **Response 200:**
 ```json
@@ -593,7 +645,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ## 14. Admin
 
-### 14.1 `GET /admin/statistics?startDate=&endDate=` ⚠️ FE only — BE chưa implement
+### 14.1 `GET /admin/statistics?startDate=&endDate=` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -607,7 +659,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ---
 
-### 14.2 `GET /admin/users?keyword=&status=&page=&size=` ⚠️ FE only — BE chưa implement
+### 14.2 `GET /admin/users?keyword=&status=&page=&size=` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -622,51 +674,51 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ---
 
-### 14.3 `GET /admin/users/{id}` ⚠️ FE only — BE chưa implement
+### 14.3 `GET /admin/users/{id}` ❌ BE chưa implement
 
 **Response 200:** (UserAccountDTO)
 
 ---
 
-### 14.4 `PATCH /admin/users/{id}/lock` ⚠️ FE only — BE chưa implement
+### 14.4 `PATCH /admin/users/{id}/lock` ✅ BE + FE
 
 **Response 200:** (UserAccountDTO updated)
 
 ---
 
-### 14.5 `PATCH /admin/users/{id}/unlock` ⚠️ FE only — BE chưa implement
+### 14.5 `PATCH /admin/users/{id}/unlock` ✅ BE + FE
 
 **Response 200:** (UserAccountDTO updated)
 
 ---
 
-### 14.6 `DELETE /admin/users/{id}` ⚠️ FE only — BE chưa implement
+### 14.6 `DELETE /admin/users/{id}` ✅ BE + FE
 
 **Response 204 No Content**
 
 ---
 
-### 14.7 `GET /admin/dishes?keyword=&categoryId=&page=&size=` ⚠️ FE only — BE chưa implement
+### 14.7 `GET /admin/dishes?keyword=&categoryId=&page=&size=` ❌ BE chưa implement
 
 **Response 200:** (Paginated DishDTO list)
 
 ---
 
-### 14.8 `POST /admin/dishes` ⚠️ FE only — BE chưa implement
+### 14.8 `POST /admin/dishes` ❌ BE chưa implement
 
 **Request:** (DishDTO + NutritionInfo)
 
 ---
 
-### 14.9 `PUT /admin/dishes/{id}` ⚠️ FE only — BE chưa implement
+### 14.9 `PUT /admin/dishes/{id}` ❌ BE chưa implement
 
 ---
 
-### 14.10 `DELETE /admin/dishes/{id}` ⚠️ FE only — BE chưa implement
+### 14.10 `DELETE /admin/dishes/{id}` ❌ BE chưa implement
 
 ---
 
-### 14.11 `GET /admin/feedbacks?status=&page=&size=` ⚠️ FE only — BE chưa implement
+### 14.11 `GET /admin/feedbacks?status=&page=&size=` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -685,7 +737,7 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 
 ---
 
-### 14.12 `PATCH /admin/feedbacks/{id}/status` ⚠️ FE only — BE chưa implement
+### 14.12 `PATCH /admin/feedbacks/{id}/status` ✅ BE + FE
 
 **Request:** `{ "status": "resolved" }`
 
@@ -714,6 +766,29 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 | 13 | POST | `/meal-plans?accountId={id}` | `MealPlanController` | `mealService.createMealPlan()` |
 | 14 | PUT | `/meal-plans/{id}` | `MealPlanController` | `mealService.updateMealPlan()` |
 | 15 | DELETE | `/meal-plans/{id}` | `MealPlanController` | `mealService.deleteMealPlan()` |
+| 16 | GET | `/health-goal/{accountId}` | `HealthGoalController` | `userService.getHealthGoal()` |
+| 17 | POST | `/health-goal/{accountId}` | `HealthGoalController` | `userService.updateHealthGoal()` |
+| 18 | GET | `/dish-categories` | `DishCategoryController` | `dishService.getCategories()` |
+| 19 | POST | `/dishes/{id}/ratings` | `DishRatingController` | `dishService.rateDish()` |
+| 20 | GET | `/dishes/{id}/ratings` | `DishRatingController` | `dishService.getDishRatings()` |
+| 21 | GET | `/favorites/account/{id}` | `FavoriteDishController` | `userService.getFavorites()` |
+| 22 | POST | `/favorites/account/{id}/{dishId}` | `FavoriteDishController` | `userService.addFavorite()` |
+| 23 | DELETE | `/favorites/account/{id}/{dishId}` | `FavoriteDishController` | `userService.removeFavorite()` |
+| 24 | POST | `/meal-plans/{planId}/meals/{type}/portions` | `PortionController` | `mealService.addPortion()` |
+| 25 | PUT | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `PortionController` | `mealService.updatePortion()` |
+| 26 | DELETE | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `PortionController` | `mealService.deletePortion()` |
+| 27 | GET | `/admin/statistics` | `AdminController` | `adminService.getStatistics()` |
+| 28 | GET | `/admin/users` | `AdminController` | `adminService.getUsers()` |
+| 29 | PATCH | `/admin/users/{id}/lock` | `AdminController` | `adminService.lockUser()` |
+| 30 | PATCH | `/admin/users/{id}/unlock` | `AdminController` | `adminService.unlockUser()` |
+| 31 | DELETE | `/admin/users/{id}` | `AdminController` | `adminService.deleteUser()` |
+| 32 | GET | `/admin/feedbacks` | `AdminController` | `adminService.getFeedbacks()` |
+| 33 | PATCH | `/admin/feedbacks/{id}/status` | `AdminController` | `adminService.updateFeedbackStatus()` |
+| 34 | POST | `/auth/logout` | `AuthController` | `authService.logout()` |
+| 35 | POST | `/auth/forgot-password` | `AuthController` | `authService.forgotPassword()` |
+| 36 | POST | `/auth/verify-otp` | `AuthController` | `authService.verifyOtp()` |
+| 37 | POST | `/auth/reset-password` | `AuthController` | `authService.resetPassword()` |
+| 38 | PUT | `/auth/change-password` | `AuthController` | `authService.changePassword()` |
 
 ### ✅ BE implement nhưng FE chưa gọi
 
@@ -721,31 +796,24 @@ FE `mealService.getMealPlanById(id)` gọi endpoint này nhưng BE không có.
 |---|---|---|---|
 | 1 | GET | `/dishes/system` | `DishController` |
 | 2 | GET | `/dishes/account/{accountId}` | `DishController` |
+| 3 | GET | `/ingredients/{id}` | `IngredientController` |
+| 4 | POST | `/ingredients` | `IngredientController` |
+| 5 | PUT | `/ingredients/{id}` | `IngredientController` |
+| 6 | DELETE | `/ingredients/{id}` | `IngredientController` |
 
-### ⚠️ FE gọi nhưng BE chưa implement
+### ❌ FE gọi nhưng BE chưa implement
 
 | # | Method | Endpoint | FE Service | Cần implement |
 |---|---|---|---|---|
-| 1 | POST | `/auth/logout` | `authService.logout()` | `AuthController` |
-| 2 | POST | `/auth/forgot-password` | `authService.forgotPassword()` | `AuthController` |
-| 3 | POST | `/auth/verify-otp` | `authService.verifyOtp()` | `AuthController` |
-| 4 | POST | `/auth/reset-password` | `authService.resetPassword()` | `AuthController` |
-| 5 | PUT | `/auth/change-password` | `authService.changePassword()` | `AuthController` |
-| 6 | GET | `/health-goal/{accountId}` | `userService.getHealthGoal()` | `HealthGoalController` |
-| 7 | POST | `/health-goal/{accountId}` | `userService.updateHealthGoal()` | `HealthGoalController` |
-| 8 | GET | `/dish-categories` | `dishService.getCategories()` | `DishCategoryController` |
-| 9 | POST | `/dishes/{id}/ratings` | `dishService.rateDish()` | `DishRatingController` |
-| 10 | GET | `/dishes/{id}/ratings` | `dishService.getDishRatings()` | `DishRatingController` |
-| 11 | GET | `/favorites/account/{id}` | `userService.getFavorites()` | `FavoriteController` |
-| 12 | POST | `/favorites/account/{id}/{dishId}` | `userService.addFavorite()` | `FavoriteController` |
-| 13 | DELETE | `/favorites/account/{id}/{dishId}` | `userService.removeFavorite()` | `FavoriteController` |
-| 14 | CRUD | `/ingredients/**` | `ingredientService.*()` | `IngredientController` |
-| 15 | GET | `/meal-plans/{id}` | `mealService.getMealPlanById()` | `MealPlanController` |
-| 16 | POST | `/meal-plans/{planId}/meals/{type}/portions` | `mealService.addPortion()` | `PortionController` |
-| 17 | PUT | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `mealService.updatePortion()` | `PortionController` |
-| 18 | DELETE | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `mealService.deletePortion()` | `PortionController` |
-| 19 | GET | `/meal-plan-templates` | `mealService.getTemplates()` | `TemplateController` |
-| 20-31 | * | `/admin/**` | `adminService.*()` | `AdminController` |
+| 1 | GET | `/meal-plans/{id}` | `mealService.getMealPlanById()` | `MealPlanController` |
+| 2 | GET | `/meal-plans/{planId}/meals` | `mealService.getMeals()` | `MealController` |
+| 3 | GET | `/meal-plan-templates` | `mealService.getTemplates()` | `TemplateController` |
+| 4 | GET | `/ingredients` | `ingredientService.getIngredients()` | `IngredientController` |
+| 5 | GET | `/admin/users/{id}` | `adminService.getUserById()` | `AdminController` |
+| 6 | GET | `/admin/dishes` | `adminService.getDishes()` | `AdminController` |
+| 7 | POST | `/admin/dishes` | `adminService.createDish()` | `AdminController` |
+| 8 | PUT | `/admin/dishes/{id}` | `adminService.updateDish()` | `AdminController` |
+| 9 | DELETE | `/admin/dishes/{id}` | `adminService.deleteDish()` | `AdminController` |
 
 ---
 
