@@ -12,14 +12,13 @@ Triển khai toàn bộ các endpoint được liệt kê trong tài liệu [API
 - **Dish Rating:** `DishRatingController` + `DishRatingServiceImpl` đã triển khai. Cho phép người dùng đánh giá món ăn (score, comment).
 - **Favorites:** `FavoriteDishController` + `FavoriteDishServiceImpl` đã triển khai. Thêm/Xóa món ăn yêu thích.
 
-### Nhóm 3: Ingredients & Meal/Portions 🟡 Một phần
-- **Ingredients:** `IngredientController` + `IngredientServiceImpl` đã triển khai CRUD cơ bản (theo ID). **Còn thiếu:** `GET /ingredients` với phân trang/tìm kiếm.
-- **Meal & Portions:** `PortionController` + `PortionServiceImpl` đã triển khai. Tự động tính dinh dưỡng khi thêm/cập nhật khẩu phần và tạo `Meal` nếu chưa tồn tại. **Còn thiếu:** `GET /meal-plans/{planId}/meals`.
+### Nhóm 3: Ingredients & Meal/Portions ✅ Hoàn thành
+- **Ingredients:** `IngredientController` + `IngredientServiceImpl` đã triển khai CRUD đầy đủ, bao gồm `GET /ingredients` với phân trang (`page`, `size`) và tìm kiếm (`search`).
+- **Meal & Portions:** `PortionController` + `PortionServiceImpl` đã triển khai. Tự động tính dinh dưỡng khi thêm/cập nhật khẩu phần và tạo `Meal` nếu chưa tồn tại. `GET /meal-plans/{planId}/meals` đã implement trong `MealController`.
 
-### Nhóm 4: Admin & Feedback 🟡 Một phần
+### Nhóm 4: Admin & Feedback ✅ Hoàn thành
 - `UserFeedback` entity/repository, `AdminAuditLog` entity/repository đã tạo.
-- `AdminController` + `AdminServiceImpl` đã triển khai: Thống kê, Quản lý users (lock/unlock/soft delete), Quản lý feedbacks.
-- **Còn thiếu:** CRUD món ăn dưới `/admin/dishes` và `GET /admin/users/{id}`.
+- `AdminController` + `AdminServiceImpl` đã triển khai đầy đủ: Thống kê, Quản lý users (lock/unlock/soft delete/getById), Quản lý feedbacks, CRUD món ăn dưới `/admin/dishes`.
 
 ### Nhóm 5: Auth bổ sung ✅ Hoàn thành
 - `POST /auth/logout`, `POST /auth/forgot-password`, `POST /auth/verify-otp`, `POST /auth/reset-password`, `PUT /auth/change-password` đã triển khai trong `AuthController` + `UserAccountServiceImpl`.
@@ -41,9 +40,9 @@ Triển khai toàn bộ các endpoint được liệt kê trong tài liệu [API
 2. **DishCategoryService** & `DishCategoryController` ✅
 3. **DishRatingService** & `DishRatingController` ✅
 4. **FavoriteDishService** & `FavoriteDishController` ✅
-5. **IngredientService** & `IngredientController` ✅ (cơ bản)
+5. **IngredientService** & `IngredientController` ✅ (đầy đủ: CRUD + phân trang/tìm kiếm)
 6. **PortionService** & `PortionController` ✅
-7. **AdminService** & `AdminController` ✅ (một phần)
+7. **AdminService** & `AdminController` ✅ (đầy đủ: users, feedbacks, dishes)
 
 ---
 
