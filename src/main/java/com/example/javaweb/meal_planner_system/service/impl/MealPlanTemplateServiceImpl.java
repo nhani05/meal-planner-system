@@ -53,6 +53,20 @@ public class MealPlanTemplateServiceImpl implements MealPlanTemplateService {
     }
 
     @Override
+    public MealPlanTemplateDTO updateTemplate(Long templateId, Long accountId, String templateName) {
+        MealPlanTemplate template = mealPlanTemplateRepository.findById(templateId)
+                .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
+        if (!template.getAccount().getId().equals(accountId)) {
+            throw new BadRequestException("You do not own this template");
+        }
+        if (templateName != null && !templateName.isBlank()) {
+            template.setTemplateName(templateName.trim());
+        }
+        MealPlanTemplate saved = mealPlanTemplateRepository.save(template);
+        return MealPlanTemplateConverter.toDTO(saved);
+    }
+
+    @Override
     public void deleteTemplate(Long templateId, Long accountId) {
         MealPlanTemplate template = mealPlanTemplateRepository.findById(templateId)
                 .orElseThrow(() -> new ResourceNotFoundException("Template not found"));

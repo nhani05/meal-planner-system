@@ -41,6 +41,16 @@ public class MealPlanTemplateController {
         return ResponseEntity.status(201).body(mealPlanTemplateService.saveTemplate(accountId, sourcePlanId, templateName));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateTemplate(@PathVariable Long id, @RequestBody Map<String, Object> body, HttpServletRequest httpRequest) {
+        Long accountId = extractAccountId(httpRequest);
+        if (accountId == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        String templateName = body.get("templateName") != null ? body.get("templateName").toString() : null;
+        return ResponseEntity.ok(mealPlanTemplateService.updateTemplate(id, accountId, templateName));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTemplate(@PathVariable Long id, HttpServletRequest httpRequest) {
         Long accountId = extractAccountId(httpRequest);
