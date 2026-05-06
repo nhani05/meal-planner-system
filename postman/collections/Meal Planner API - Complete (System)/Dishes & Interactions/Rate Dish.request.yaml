@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/dishes/1/ratings"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "score": 5,
+      "comment": "Mon an tuyet voi!"
+    }
+order: 9000

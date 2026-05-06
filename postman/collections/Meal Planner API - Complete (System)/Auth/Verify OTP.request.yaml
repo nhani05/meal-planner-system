@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/verify-otp"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "tester1@example.com",
+      "otp": "123456"
+    }
+order: 6000

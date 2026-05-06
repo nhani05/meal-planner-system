@@ -1,9 +1,11 @@
 # Kế hoạch hoàn thiện Backend — Meal Planner System
 
-> **Ngày lập:** 05/05/2026
-> **Tổng endpoint còn thiếu:** 14
-> **Kiến trúc:** Spring Boot 3-layer (Controller → Service → Repository)
-> **Mục tiêu:** Triển khai toàn bộ endpoint BE chưa implement để khớp với FE.
+> **Ngày lập:** 05/05/2026  
+> **Ngày cập nhật review:** 06/05/2026  
+> **Tổng endpoint đã hoàn thành (Giai đoạn 1-5):** 14  
+> **Tổng endpoint còn thiếu (Giai đoạn 6-10):** 10  
+> **Kiến trúc:** Spring Boot 3-layer (Controller → Service → Repository)  
+> **Mục tiêu:** Triển khai toàn bộ endpoint BE chưa implement để khớp với `N4_SE.md` (UR-09 đến UR-19).
 
 ---
 
@@ -158,6 +160,30 @@ src/main/java/com/example/javaweb/meal_planner_system/
     └── AdminService.java                       [UPDATE] thêm method
 ```
 
+### Danh sách file cần tạo / chỉnh sửa (Giai đoạn 6-10 — cập nhật 06/05/2026)
+
+```
+src/main/java/com/example/javaweb/meal_planner_system/
+├── controller/
+│   └── UserFeedbackController.java            [NEW] POST/GET /feedbacks
+│   └── DishCategoryController.java            [UPDATE] + POST/PUT/DELETE /dish-categories (Admin)
+│   └── MealPlanTemplateController.java        [UPDATE] + POST/DELETE /meal-plan-templates
+│   └── DishController.java                    [UPDATE] + filter GET /dishes, auto-calc POST /dishes
+│   └── MealPlanController.java                [UPDATE] + nested PUT /meal-plans/{id}
+├── dto/
+│   ├── FeedbackCreateDTO.java                 [NEW]
+│   ├── MealPlanUpdateRequestDTO.java          [NEW] (nested meals/portions)
+│   └── DishCreateRequestDTO.java              [NEW] (dish + ingredients + auto-calc flag)
+├── service/
+│   ├── UserFeedbackService.java               [NEW]
+│   ├── DishCategoryService.java               [UPDATE] + create/update/delete
+│   ├── MealPlanTemplateService.java           [UPDATE] + saveTemplateFromMealPlan/deleteTemplate
+│   ├── DishService.java                       [UPDATE] + searchDishes, calculateNutritionFromIngredients
+│   └── MealPlanService.java                   [UPDATE] + updateMealPlanWithNestedMeals
+└── repository/
+    └── DishRepository.java                    [UPDATE] + JPQL/Specification filter
+```
+
 ---
 
 ## 4. Thứ tự triển khai đề xuất
@@ -169,6 +195,11 @@ src/main/java/com/example/javaweb/meal_planner_system/
 | 3 | **Ingredients — GET /ingredients** | FE cần danh sách nguyên liệu để hiển thị. |
 | 4 | **Admin bổ sung** | Quản lý món ăn và chi tiết user cho admin dashboard. |
 | 5 | **Templates** | Tính năng phụ, có thể để sau cùng. |
+| 6 | **User Feedback** | Hoàn thiện UR-19 (gửi/xem phản hồi). |
+| 7 | **Admin Dish Category CRUD** | Hoàn thiện UR-17 (quản lý danh mục món ăn). |
+| 8 | **Dish Filter & Auto-calc Nutrition** | Hoàn thiện UR-13 (tìm kiếm/lọc) + UR-14 (món tùy chỉnh). |
+| 9 | **Meal Plan Templates POST/DELETE** | Hoàn thiện UR-12 (lưu/xóa kế hoạch mẫu). |
+| 10 | **PUT Meal Plans nested** | Hoàn thiện UR-09 (chỉnh sửa cấu trúc bữa ăn). |
 
 ---
 

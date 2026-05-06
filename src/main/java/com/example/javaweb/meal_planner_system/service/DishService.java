@@ -1,8 +1,11 @@
 package com.example.javaweb.meal_planner_system.service;
 
+import com.example.javaweb.meal_planner_system.dto.AdminDishRequestDTO;
 import com.example.javaweb.meal_planner_system.dto.DishDTO;
 import com.example.javaweb.meal_planner_system.entity.Dish;
 import com.example.javaweb.meal_planner_system.entity.enums.DishSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -17,4 +20,6 @@ public interface DishService {
     List<Dish> findAll();
     DishDTO convertToDTO(Dish dish);
     void delete(Long id);
+    Page<DishDTO> searchDishes(String keyword, Integer categoryId, String minCal, String maxCal, Pageable pageable);
+    DishDTO createCustomDish(Long accountId, AdminDishRequestDTO request);
 }

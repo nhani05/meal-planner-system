@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface MealPlanTemplateService {
     List<MealPlanTemplateDTO> findByAccountId(Long accountId);
+    MealPlanTemplateDTO saveTemplate(Long accountId, Long sourcePlanId, String templateName);
+    void deleteTemplate(Long templateId, Long accountId);
 }

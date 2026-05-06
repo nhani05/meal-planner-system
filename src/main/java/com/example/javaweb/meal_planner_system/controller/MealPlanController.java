@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 // Module: Controller
 
 import com.example.javaweb.meal_planner_system.dto.MealPlanDTO;
+import com.example.javaweb.meal_planner_system.dto.MealPlanUpdateDTO;
 import com.example.javaweb.meal_planner_system.entity.MealPlan;
 import com.example.javaweb.meal_planner_system.service.MealPlanService;
 
@@ -67,8 +68,8 @@ public class MealPlanController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMealPlan(
             @PathVariable Long id,
-            @RequestBody MealPlanDTO mealPlanDTO) {
-        var updatedDto = mealPlanService.updateFromDTO(id, mealPlanDTO);
+            @RequestBody MealPlanUpdateDTO mealPlanUpdateDTO) {
+        var updatedDto = mealPlanService.updateFromDTO(id, mealPlanUpdateDTO);
         return ResponseEntity.ok(updatedDto);
     }
 

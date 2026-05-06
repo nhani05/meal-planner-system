@@ -5,4 +5,7 @@ import java.util.List;
 
 public interface DishCategoryService {
     List<DishCategoryDTO> findAll();
+    DishCategoryDTO create(String name);
+    DishCategoryDTO update(Integer id, String name);
+    void delete(Integer id);
 }

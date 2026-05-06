@@ -1,6 +1,7 @@
 package com.example.javaweb.meal_planner_system.service;
 
 import com.example.javaweb.meal_planner_system.dto.MealPlanDTO;
+import com.example.javaweb.meal_planner_system.dto.MealPlanUpdateDTO;
 import com.example.javaweb.meal_planner_system.entity.MealPlan;
 
 import java.time.LocalDate;
@@ -21,5 +22,5 @@ public interface MealPlanService {
     // Create a meal plan for an account from DTO
     MealPlanDTO createForAccount(Long accountId, MealPlanDTO mealPlanDTO);
     // Update an existing meal plan from DTO
-    MealPlanDTO updateFromDTO(Long id, MealPlanDTO mealPlanDTO);
+    MealPlanDTO updateFromDTO(Long id, MealPlanUpdateDTO mealPlanUpdateDTO);
 }

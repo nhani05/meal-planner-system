@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PortionServiceImpl implements PortionService {
@@ -27,6 +30,9 @@ public class PortionServiceImpl implements PortionService {
 
     @Autowired
     private MealService mealService;
+
+    @Autowired
+    private com.example.javaweb.meal_planner_system.repository.MealRepository mealRepository;
 
     @Autowired
     private DishService dishService;
@@ -65,6 +71,16 @@ public class PortionServiceImpl implements PortionService {
     @Override
     public void deletePortion(Long portionId) {
         portionRepository.deleteById(portionId);
+    }
+
+    @Override
+    public List<PortionDTO> getPortionsByMealPlanAndType(Long mealPlanId, MealType mealType) {
+        return mealRepository.findByMealPlanIdAndMealType(mealPlanId, mealType)
+                .map(meal -> portionRepository.findByMealId(meal.getId())
+                        .stream()
+                        .map(PortionConverter::toDTO)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
     private void calculateNutrition(Portion portion) {

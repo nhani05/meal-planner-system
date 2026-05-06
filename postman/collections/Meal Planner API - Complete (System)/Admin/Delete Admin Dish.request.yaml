@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/admin/dishes/1"
+method: DELETE
+headers:
+  Authorization: Bearer {{token}}
+order: 12000
