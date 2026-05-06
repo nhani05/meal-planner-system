@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import com.example.javaweb.meal_planner_system.dto.AdminDishRequestDTO;
 import com.example.javaweb.meal_planner_system.entity.enums.FeedbackStatus;
 import com.example.javaweb.meal_planner_system.entity.enums.UserStatus;
+import com.example.javaweb.meal_planner_system.security.JwtUtil;
 import com.example.javaweb.meal_planner_system.service.AdminService;
 import org.springframework.data.domain.PageRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/admin")
@@ -18,6 +21,9 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping("/statistics")
     public ResponseEntity<?> getStats() {
@@ -34,20 +40,23 @@ public class AdminController {
     }
 
     @PatchMapping("/users/{id}/lock")
-    public ResponseEntity<?> lockUser(@PathVariable Long id) {
-        adminService.updateUserStatus(id, UserStatus.LOCKED);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> lockUser(@PathVariable Long id, HttpServletRequest request) {
+        Long adminId = extractAdminId(request);
+        adminService.updateUserStatus(id, UserStatus.LOCKED, adminId);
+        return ResponseEntity.ok(java.util.Map.of("status", "locked"));
     }
 
     @PatchMapping("/users/{id}/unlock")
-    public ResponseEntity<?> unlockUser(@PathVariable Long id) {
-        adminService.updateUserStatus(id, UserStatus.ACTIVE);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> unlockUser(@PathVariable Long id, HttpServletRequest request) {
+        Long adminId = extractAdminId(request);
+        adminService.updateUserStatus(id, UserStatus.ACTIVE, adminId);
+        return ResponseEntity.ok(java.util.Map.of("status", "active"));
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        adminService.updateUserStatus(id, UserStatus.DELETED);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, HttpServletRequest request) {
+        Long adminId = extractAdminId(request);
+        adminService.updateUserStatus(id, UserStatus.DELETED, adminId);
         return ResponseEntity.noContent().build();
     }
 
@@ -99,5 +108,20 @@ public class AdminController {
     public ResponseEntity<?> deleteAdminDish(@PathVariable Long id) {
         adminService.deleteAdminDish(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // UC16 NFR16-3: Admin audit logs
+    @GetMapping("/audit-logs")
+    public ResponseEntity<?> getAuditLogs(Pageable pageable) {
+        return ResponseEntity.ok(adminService.getAuditLogs(pageable));
+    }
+
+    private Long extractAdminId(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            return jwtUtil.extractUserId(token);
+        }
+        return null;
     }
 }

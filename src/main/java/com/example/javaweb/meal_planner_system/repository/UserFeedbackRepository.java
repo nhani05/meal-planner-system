@@ -13,4 +13,5 @@ import java.util.List;
 public interface UserFeedbackRepository extends JpaRepository<UserFeedback, Long> {
     Page<UserFeedback> findByStatus(FeedbackStatus status, Pageable pageable);
     List<UserFeedback> findByAccountId(Long accountId);
+    long countByStatus(FeedbackStatus status);
 }

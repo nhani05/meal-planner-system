@@ -4,26 +4,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum FeedbackStatus {
-    PENDING("pending"),
-    PROCESSING("processing"),
-    RESOLVED("resolved");
-
-    private final String value;
-
-    FeedbackStatus(String value) {
-        this.value = value;
-    }
+    PENDING,
+    PROCESSING,
+    RESOLVED;
 
     @JsonValue
     public String getValue() {
-        return value;
+        return name().toLowerCase();
     }
 
     @JsonCreator
     public static FeedbackStatus fromValue(String value) {
         if (value == null) return null;
         for (FeedbackStatus status : FeedbackStatus.values()) {
-            if (status.value.equalsIgnoreCase(value)) {
+            if (status.name().equalsIgnoreCase(value)) {
                 return status;
             }
         }
