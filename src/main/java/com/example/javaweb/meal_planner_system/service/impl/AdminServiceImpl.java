@@ -44,30 +44,72 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private PortionRepository portionRepository;
 
+    @Autowired
+    private AdminAuditLogRepository adminAuditLogRepository;
+
     @Override
     public AdminStatsDTO getStatistics() {
         AdminStatsDTO stats = new AdminStatsDTO();
         stats.setTotalUsers(userAccountRepository.count());
         stats.setTotalDishes(dishRepository.count());
         stats.setActivePlansToday(mealPlanRepository.countByPlanDate(LocalDate.now()));
-        // Giả sử có query đếm feedback mới (PENDING)
-        stats.setNewFeedbacks(userFeedbackRepository.count()); // Tạm thời đếm tất cả
+        // UC18: Count only PENDING feedbacks as "new"
+        stats.setNewFeedbacks(userFeedbackRepository.countByStatus(FeedbackStatus.PENDING));
         return stats;
     }
 
     @Override
     public Page<UserAccountDTO> getAllUsers(String keyword, UserStatus status, Pageable pageable) {
-        // Tạm thời trả về tất cả, logic filter keyword/status có thể bổ sung sau
+        // UC16: Implement keyword and status filtering with LIKE search
+        if (keyword != null && !keyword.isBlank()) {
+            String searchTerm = keyword.trim();
+            if (status != null) {
+                return userAccountRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseAndStatus(
+                        searchTerm, searchTerm, status, pageable)
+                        .map(UserAccountConverter::toDTO);
+            }
+            return userAccountRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                    searchTerm, searchTerm, pageable)
+                    .map(UserAccountConverter::toDTO);
+        }
+        if (status != null) {
+            return userAccountRepository.findByStatus(status, pageable)
+                    .map(UserAccountConverter::toDTO);
+        }
         return userAccountRepository.findAll(pageable)
                 .map(UserAccountConverter::toDTO);
     }
 
     @Override
-    public void updateUserStatus(Long userId, UserStatus status) {
+    public void updateUserStatus(Long userId, UserStatus status, Long adminId) {
         UserAccount user = userAccountRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        UserStatus oldStatus = user.getStatus();
         user.setStatus(status);
         userAccountRepository.save(user);
+
+        // UC16 NFR16-3: Log admin action
+        String action = switch (status) {
+            case LOCKED -> "LOCK_USER";
+            case ACTIVE -> "UNLOCK_USER";
+            case DELETED -> "DELETE_USER";
+            default -> "UPDATE_USER_STATUS";
+        };
+        logAdminAction(adminId, action, "UserAccount", userId,
+                "Changed status from " + oldStatus + " to " + status);
+    }
+
+    private void logAdminAction(Long adminId, String action, String targetType, Long targetId, String details) {
+        UserAccount admin = userAccountRepository.findById(adminId)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
+
+        AdminAuditLog log = new AdminAuditLog();
+        log.setAdmin(admin);
+        log.setAction(action);
+        log.setTargetEntity(targetType);
+        log.setTargetId(targetId);
+        log.setDetails(details);
+        adminAuditLogRepository.save(log);
     }
 
     @Override
@@ -244,5 +286,22 @@ public class AdminServiceImpl implements AdminService {
         }
 
         dishRepository.delete(dish);
+    }
+
+    @Override
+    public Page<AdminAuditLogDTO> getAuditLogs(Pageable pageable) {
+        return adminAuditLogRepository.findAllByOrderByPerformedAtDesc(pageable)
+                .map(log -> {
+                    AdminAuditLogDTO dto = new AdminAuditLogDTO();
+                    dto.setId(log.getId());
+                    dto.setAdminId(log.getAdmin().getId());
+                    dto.setAdminUsername(log.getAdmin().getUsername());
+                    dto.setAction(log.getAction());
+                    dto.setTargetEntity(log.getTargetEntity());
+                    dto.setTargetId(log.getTargetId());
+                    dto.setDetails(log.getDetails());
+                    dto.setPerformedAt(log.getPerformedAt());
+                    return dto;
+                });
     }
 }

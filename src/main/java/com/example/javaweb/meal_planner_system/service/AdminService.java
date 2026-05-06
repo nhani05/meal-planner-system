@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 public interface AdminService {
     AdminStatsDTO getStatistics();
     Page<UserAccountDTO> getAllUsers(String keyword, UserStatus status, Pageable pageable);
-    void updateUserStatus(Long userId, UserStatus status);
+    void updateUserStatus(Long userId, UserStatus status, Long adminId);
     Page<FeedbackDTO> getFeedbacks(FeedbackStatus status, Pageable pageable);
     void updateFeedbackStatus(Long feedbackId, FeedbackStatus status);
 
@@ -19,4 +19,7 @@ public interface AdminService {
     DishDTO createAdminDish(AdminDishRequestDTO request);
     DishDTO updateAdminDish(Long id, AdminDishRequestDTO request);
     void deleteAdminDish(Long id);
+
+    // UC16 NFR16-3: Admin audit logs
+    Page<AdminAuditLogDTO> getAuditLogs(Pageable pageable);
 }
