@@ -15,15 +15,16 @@
 5. [Dishes — Món ăn](#5-dishes)
 6. [Dish Categories](#6-dish-categories)
 7. [Dish Ratings](#7-dish-ratings)
-8. [Favorites — Yêu thích](#8-favorites)
-9. [Ingredients — Nguyên liệu](#9-ingredients)
-10. [Meal Plans — Kế hoạch bữa ăn](#10-meal-plans)
-11. [Meals — Bữa ăn](#11-meals)
-12. [Portions — Khẩu phần](#12-portions)
-13. [Meal Plan Templates](#13-meal-plan-templates)
-14. [Admin](#14-admin)
-15. [Bảng so sánh BE vs FE](#15-bảng-so-sánh-be-vs-fe)
-16. [Enum Values](#16-enum-values)
+8. [Feedbacks — Phản hồi người dùng](#8-feedbacks--phản-hồi-người-dùng-user)
+9. [Favorites — Yêu thích](#9-favorites--yêu-thích)
+10. [Ingredients — Nguyên liệu](#10-ingredients)
+11. [Meal Plans — Kế hoạch bữa ăn](#11-meal-plans--kế-hoạch-bữa-ăn)
+12. [Meals — Bữa ăn](#12-meals--bữa-ăn)
+13. [Portions — Khẩu phần](#13-portions--khẩu-phần)
+14. [Meal Plan Templates](#14-meal-plan-templates)
+15. [Admin](#15-admin)
+16. [Bảng so sánh BE vs FE](#16-bảng-so-sánh-be-vs-fe)
+17. [Enum Values](#17-enum-values)
 
 ---
 
@@ -294,27 +295,39 @@ Logout xử lý client-side (xóa token khỏi store). BE trả `200 OK` xác nh
 
 ## 5. Dishes — Món ăn
 
-### 5.1 `GET /dishes` ✅ BE + FE
+### 5.1 `GET /dishes` ✅ BE + FE (Filter ⏳ BE chưa implement)
 
 > **Auth:** Bearer Token
 
+**Query Params:**
+- `keyword` — tìm kiếm theo tên món (optional, case-insensitive)
+- `categoryId` — lọc theo danh mục (optional)
+- `minCal` — lọc calo tối thiểu trên 100g (optional)
+- `maxCal` — lọc calo tối đa trên 100g (optional)
+- `page` — số trang (default: 0)
+- `size` — số lượng mỗi trang (default: 20)
+
 **Response 200:**
 ```json
-[
-  {
-    "id": 1,
-    "name": "Grilled Chicken",
-    "categoryId": 1,
-    "imageUrl": "https://example.com/chicken.jpg",
-    "source": "system",
-    "difficulty": "easy",
-    "totalTimeMin": 45
-  }
-]
+{
+  "content": [
+    {
+      "id": 1,
+      "name": "Grilled Chicken",
+      "categoryId": 1,
+      "imageUrl": "https://example.com/chicken.jpg",
+      "source": "system",
+      "difficulty": "easy",
+      "totalTimeMin": 45
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1
+}
 ```
 
 > [!NOTE]
-> FE `dishService.getDishes()` gửi query params `{ keyword, categoryId, minCal, maxCal, page, size }` — nhưng BE hiện tại **không hỗ trợ filter/phân trang**, trả toàn bộ danh sách.
+> FE `dishService.getDishes()` gửi query params `{ keyword, categoryId, minCal, maxCal, page, size }` — nhưng BE hiện tại **không hỗ trợ filter/phân trang**, trả toàn bộ danh sách. Cần bổ sung `Specification<Dish>` hoặc JPQL query.
 
 ---
 
@@ -338,25 +351,44 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 5.5 `POST /dishes` ✅ BE + FE
+### 5.5 `POST /dishes` ✅ BE + FE (Auto-calc Nutrition ⏳ BE chưa implement)
 
 > **Auth:** Bearer Token
 
-**Request:**
+**Request (cơ bản — giữ nguyên):**
 ```json
 {
   "name": "Grilled Chicken",
   "categoryId": 1,
   "imageUrl": "https://example.com/chicken.jpg",
-  "source": "system",
+  "source": "custom",
   "difficulty": "easy",
   "totalTimeMin": 45
 }
 ```
 
+**Request (nâng cao — UR-14: Custom Dish + Ingredients → Auto Nutrition):**
+```json
+{
+  "name": "Salad ức gà tự làm",
+  "categoryId": 3,
+  "imageUrl": "https://example.com/salad.jpg",
+  "source": "custom",
+  "difficulty": "easy",
+  "totalTimeMin": 20,
+  "ingredients": [
+    { "name": "Chicken Breast", "quantityG": 200.0, "unit": "g" },
+    { "name": "Lettuce", "quantityG": 100.0, "unit": "g" },
+    { "name": "Olive Oil", "quantityG": 10.0, "unit": "ml" }
+  ]
+}
+```
+
+> **Logic:** Nếu request chứa `ingredients[]`, hệ thống tự động tính `NutritionInfo` (caloriesPer100g, proteinPer100g, carbPer100g, fatPer100g) từ tổng nguyên liệu và lưu vào `tblNutritionInfo`.
+
 **Response 200:** (DishDTO đã lưu)
 
-**Errors:** `400` — `"Dish name is required"`
+**Errors:** `400` — `"Dish name is required"` / `"Ingredients cannot be empty"`
 
 ---
 
@@ -426,9 +458,56 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-## 8. Favorites — Yêu thích
+## 8. Feedbacks — Phản hồi người dùng (User)
 
-### 8.1 `GET /favorites/account/{accountId}` ✅ BE + FE
+### 8.1 `POST /feedbacks` ⏳ BE chưa implement
+
+> **Auth:** Bearer Token
+
+**Request:**
+```json
+{
+  "content": "Ứng dụng rất hay, nhưng cần thêm tính năng gợi ý món ăn"
+}
+```
+
+**Response 201:**
+```json
+{
+  "id": 1,
+  "accountId": 5,
+  "content": "Ứng dụng rất hay, nhưng cần thêm tính năng gợi ý món ăn",
+  "status": "pending",
+  "submittedAt": "2026-05-06T08:00:00Z"
+}
+```
+
+**Errors:** `400` — `"Content is required"`
+
+---
+
+### 8.2 `GET /feedbacks` ⏳ BE chưa implement
+
+> **Auth:** Bearer Token — Chỉ trả phản hồi của user đang đăng nhập
+
+**Response 200:**
+```json
+[
+  {
+    "id": 1,
+    "accountId": 5,
+    "content": "Ứng dụng rất hay",
+    "status": "pending",
+    "submittedAt": "2026-05-06T08:00:00Z"
+  }
+]
+```
+
+---
+
+## 9. Favorites — Yêu thích
+
+### 9.1 `GET /favorites/account/{accountId}` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -447,21 +526,21 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 8.2 `POST /favorites/account/{accountId}/{dishId}` ✅ BE + FE
+### 9.2 `POST /favorites/account/{accountId}/{dishId}` ✅ BE + FE
 
 **Response 200:** (Thành công)
 
 ---
 
-### 8.3 `DELETE /favorites/account/{accountId}/{dishId}` ✅ BE + FE
+### 9.3 `DELETE /favorites/account/{accountId}/{dishId}` ✅ BE + FE
 
 **Response 204 No Content**
 
 ---
 
-## 9. Ingredients — Nguyên liệu
+## 10. Ingredients — Nguyên liệu
 
-### 9.1 `GET /ingredients` — Query: `{ page, size, search }` ✅ BE + FE
+### 10.1 `GET /ingredients` — Query: `{ page, size, search }` ✅ BE + FE
 
 > **Auth:** Bearer Token
 
@@ -482,13 +561,13 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 }
 ```
 
-### 9.2 `GET /ingredients/{id}` ✅ BE only
+### 10.2 `GET /ingredients/{id}` ✅ BE only
 
-### 9.3 `POST /ingredients` ✅ BE only
+### 10.3 `POST /ingredients` ✅ BE only
 
-### 9.4 `PUT /ingredients/{id}` ✅ BE only
+### 10.4 `PUT /ingredients/{id}` ✅ BE only
 
-### 9.5 `DELETE /ingredients/{id}` ✅ BE only
+### 10.5 `DELETE /ingredients/{id}` ✅ BE only
 
 **IngredientDTO format:**
 ```json
@@ -503,9 +582,9 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-## 10. Meal Plans — Kế hoạch bữa ăn
+## 11. Meal Plans — Kế hoạch bữa ăn
 
-### 10.1 `GET /meal-plans/account/{accountId}` ✅ BE + FE
+### 11.1 `GET /meal-plans/account/{accountId}` ✅ BE + FE
 
 > **Auth:** Bearer Token
 
@@ -522,7 +601,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 10.2 `GET /meal-plans/account/{accountId}/date/{planDate}` ✅ BE + FE
+### 11.2 `GET /meal-plans/account/{accountId}/date/{planDate}` ✅ BE + FE
 
 **Path:** `planDate` format `yyyy-MM-dd`
 
@@ -532,7 +611,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 10.3 `GET /meal-plans/{id}` ✅ BE + FE
+### 11.3 `GET /meal-plans/{id}` ✅ BE + FE
 
 > **Auth:** Bearer Token
 
@@ -549,7 +628,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 10.4 `POST /meal-plans?accountId={accountId}` ✅ BE + FE
+### 11.4 `POST /meal-plans?accountId={accountId}` ✅ BE + FE
 
 > **Auth:** Bearer Token — `accountId` là **query param**
 
@@ -565,27 +644,63 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 10.5 `PUT /meal-plans/{id}` ✅ BE + FE
+### 11.5 `PUT /meal-plans/{id}` ✅ BE + FE (Nested Update ⏳ BE chưa implement)
 
-**Request:** (cùng format POST)
+> **Auth:** Bearer Token
+
+**Request (cơ bản — giữ nguyên):**
+```json
+{
+  "planName": "Lunch Plan Updated",
+  "planDate": "2026-05-03"
+}
+```
+
+**Request (nâng cao — UR-09: Chỉnh sửa cấu trúc bữa ăn bên trong):**
+```json
+{
+  "planName": "Lunch Plan Updated",
+  "planDate": "2026-05-03",
+  "meals": [
+    {
+      "mealType": "breakfast",
+      "portions": [
+        { "dishId": 5, "quantityG": 200.0 },
+        { "dishId": 8, "quantityG": 150.0 }
+      ]
+    },
+    {
+      "mealType": "lunch",
+      "portions": [
+        { "dishId": 3, "quantityG": 300.0 }
+      ]
+    }
+  ]
+}
+```
+
+> **Logic:**
+> - So sánh `meals[]` gửi lên với DB: giữ nguyên portions không đổi, thêm mới, xóa thiếu, cập nhật `quantityG`.
+> - Tự động recalculate dinh dưỡng cho các portions bị thay đổi.
+> - Trả về `MealPlanDTO` đầy đủ với `meals[]` và `portions[]` đã cập nhật.
 
 **Response 200:** (MealPlanDTO đã cập nhật)
 
-**Errors:** `404` — `"MealPlan not found with id {id}"`
+**Errors:** `404` — `"MealPlan not found with id {id}"` / `400` — `"Invalid meal type or portion data"`
 
 ---
 
-### 10.6 `DELETE /meal-plans/{id}` ✅ BE + FE
+### 11.6 `DELETE /meal-plans/{id}` ✅ BE + FE
 
 **Response 204 No Content**
 
 ---
 
-## 11. Meals — Bữa ăn
+## 12. Meals — Bữa ăn
 
 > **Endpoint trung gian được dùng trong Portions**
 
-### 11.1 `GET /meal-plans/{planId}/meals` ✅ BE + FE
+### 12.1 `GET /meal-plans/{planId}/meals` ✅ BE + FE
 
 > **Auth:** Bearer Token
 
@@ -607,9 +722,37 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-## 12. Portions — Khẩu phần
+## 13. Portions — Khẩu phần
 
-### 12.1 `POST /meal-plans/{planId}/meals/{mealType}/portions` ✅ BE + FE
+### 13.1 `GET /meal-plans/{planId}/meals/{mealType}/portions` ✅ BE + FE
+
+> **Auth:** Bearer Token
+
+> **Mục đích:** Lấy danh sách khẩu phần của một bữa ăn (breakfast/lunch/dinner/snack) trong kế hoạch. Frontend gọi endpoint này khi mở lại kế hoạch để load dữ liệu khẩu phần đã lưu.
+
+**Response 200:**
+```json
+[
+  {
+    "id": 1,
+    "mealId": 3,
+    "dishId": 5,
+    "quantityG": 200.0,
+    "caloriesKcal": 330.0,
+    "proteinG": 62.0,
+    "carbG": 0.0,
+    "fatG": 7.2
+  }
+]
+```
+
+> [!NOTE]
+> - Trả về mảng rỗng `[]` nếu bữa ăn chưa có khẩu phần nào (không trả 404).
+> - `mealType` nhận giá trị: `breakfast`, `lunch`, `dinner`, `snack` (lowercase).
+
+---
+
+### 13.2 `POST /meal-plans/{planId}/meals/{mealType}/portions` ✅ BE + FE
 
 **Request:**
 ```json
@@ -635,7 +778,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 12.2 `PUT /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ✅ BE + FE
+### 13.3 `PUT /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ✅ BE + FE
 
 **Request:**
 ```json
@@ -648,15 +791,15 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 12.3 `DELETE /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ✅ BE + FE
+### 13.3 `DELETE /meal-plans/{planId}/meals/{mealType}/portions/{portionId}` ✅ BE + FE
 
 **Response 204 No Content**
 
 ---
 
-## 13. Meal Plan Templates
+## 14. Meal Plan Templates
 
-### 13.1 `GET /meal-plan-templates?accountId={id}` ✅ BE + FE
+### 14.1 `GET /meal-plan-templates?accountId={id}` ✅ BE + FE
 
 > **Auth:** Bearer Token
 
@@ -673,9 +816,46 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-## 14. Admin
+### 14.2 `POST /meal-plan-templates?accountId={id}` ⏳ BE chưa implement
 
-### 14.1 `GET /admin/statistics?startDate=&endDate=` ✅ BE + FE
+> **Auth:** Bearer Token
+
+**Request:**
+```json
+{
+  "templateName": "Gym Day Diet",
+  "sourcePlanId": 10
+}
+```
+
+> **Note:** `sourcePlanId` là ID của `MealPlan` hiện có cần sao chép thành template.
+
+**Response 201:**
+```json
+{
+  "id": 2,
+  "templateName": "Gym Day Diet",
+  "savedAt": "2026-05-06T10:00:00Z"
+}
+```
+
+**Errors:** `404` — `"Source meal plan not found or not owned by user"`
+
+---
+
+### 14.3 `DELETE /meal-plan-templates/{id}` ⏳ BE chưa implement
+
+> **Auth:** Bearer Token
+
+**Response 204 No Content**
+
+**Errors:** `404` — `"Template not found"` / `403` — `"You do not own this template"`
+
+---
+
+## 15. Admin
+
+### 15.1 `GET /admin/statistics?startDate=&endDate=` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -689,7 +869,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.2 `GET /admin/users?keyword=&status=&page=&size=` ✅ BE + FE
+### 15.2 `GET /admin/users?keyword=&status=&page=&size=` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -704,7 +884,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.3 `GET /admin/users/{id}` ✅ BE + FE
+### 15.3 `GET /admin/users/{id}` ✅ BE + FE
 
 > **Auth:** Bearer Token (Admin only)
 
@@ -712,25 +892,25 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.4 `PATCH /admin/users/{id}/lock` ✅ BE + FE
+### 15.4 `PATCH /admin/users/{id}/lock` ✅ BE + FE
 
 **Response 200:** (UserAccountDTO updated)
 
 ---
 
-### 14.5 `PATCH /admin/users/{id}/unlock` ✅ BE + FE
+### 15.5 `PATCH /admin/users/{id}/unlock` ✅ BE + FE
 
 **Response 200:** (UserAccountDTO updated)
 
 ---
 
-### 14.6 `DELETE /admin/users/{id}` ✅ BE + FE
+### 15.6 `DELETE /admin/users/{id}` ✅ BE + FE
 
 **Response 204 No Content**
 
 ---
 
-### 14.7 `GET /admin/dishes?keyword=&categoryId=&page=&size=` ✅ BE + FE
+### 15.7 `GET /admin/dishes?keyword=&categoryId=&page=&size=` ✅ BE + FE
 
 > **Auth:** Bearer Token (Admin only)
 
@@ -744,7 +924,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.8 `POST /admin/dishes` ✅ BE + FE
+### 15.8 `POST /admin/dishes` ✅ BE + FE
 
 > **Auth:** Bearer Token (Admin only)
 
@@ -773,7 +953,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.9 `PUT /admin/dishes/{id}` ✅ BE + FE
+### 15.9 `PUT /admin/dishes/{id}` ✅ BE + FE
 
 > **Auth:** Bearer Token (Admin only)
 
@@ -783,7 +963,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.10 `DELETE /admin/dishes/{id}` ✅ BE + FE
+### 15.10 `DELETE /admin/dishes/{id}` ✅ BE + FE
 
 > **Auth:** Bearer Token (Admin only)
 
@@ -793,7 +973,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.11 `GET /admin/feedbacks?status=&page=&size=` ✅ BE + FE
+### 15.11 `GET /admin/feedbacks?status=&page=&size=` ✅ BE + FE
 
 **Response 200:**
 ```json
@@ -812,7 +992,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-### 14.12 `PATCH /admin/feedbacks/{id}/status` ✅ BE + FE
+### 15.12 `PATCH /admin/feedbacks/{id}/status` ✅ BE + FE
 
 **Request:** `{ "status": "resolved" }`
 
@@ -820,7 +1000,57 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-## 14. Bảng so sánh BE vs FE
+### 15.13 `POST /dish-categories` ⏳ BE chưa implement
+
+> **Auth:** Bearer Token (Admin only)
+
+**Request:**
+```json
+{
+  "name": "Salad"
+}
+```
+
+**Response 201:**
+```json
+{
+  "id": 5,
+  "name": "Salad"
+}
+```
+
+**Errors:** `409` — `"Category name already exists"`
+
+---
+
+### 15.14 `PUT /dish-categories/{id}` ⏳ BE chưa implement
+
+> **Auth:** Bearer Token (Admin only)
+
+**Request:**
+```json
+{
+  "name": "Salad & Rau trộn"
+}
+```
+
+**Response 200:** (DishCategoryDTO updated)
+
+**Errors:** `404` — `"Category not found"` / `409` — `"Category name already exists"`
+
+---
+
+### 15.15 `DELETE /dish-categories/{id}` ⏳ BE chưa implement
+
+> **Auth:** Bearer Token (Admin only)
+
+**Response 204 No Content**
+
+**Errors:** `409` — `"Cannot delete category: it is currently used by dishes"`
+
+---
+
+## 16. Bảng so sánh BE vs FE
 
 ### ✅ Đã implement cả BE + FE (khớp nhau)
 
@@ -849,30 +1079,46 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 | 21 | GET | `/favorites/account/{id}` | `FavoriteDishController` | `userService.getFavorites()` |
 | 22 | POST | `/favorites/account/{id}/{dishId}` | `FavoriteDishController` | `userService.addFavorite()` |
 | 23 | DELETE | `/favorites/account/{id}/{dishId}` | `FavoriteDishController` | `userService.removeFavorite()` |
-| 24 | POST | `/meal-plans/{planId}/meals/{type}/portions` | `PortionController` | `mealService.addPortion()` |
-| 25 | PUT | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `PortionController` | `mealService.updatePortion()` |
-| 26 | DELETE | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `PortionController` | `mealService.deletePortion()` |
-| 27 | GET | `/admin/statistics` | `AdminController` | `adminService.getStatistics()` |
-| 28 | GET | `/admin/users` | `AdminController` | `adminService.getUsers()` |
-| 29 | PATCH | `/admin/users/{id}/lock` | `AdminController` | `adminService.lockUser()` |
-| 30 | PATCH | `/admin/users/{id}/unlock` | `AdminController` | `adminService.unlockUser()` |
-| 31 | DELETE | `/admin/users/{id}` | `AdminController` | `adminService.deleteUser()` |
-| 32 | GET | `/admin/feedbacks` | `AdminController` | `adminService.getFeedbacks()` |
-| 33 | PATCH | `/admin/feedbacks/{id}/status` | `AdminController` | `adminService.updateFeedbackStatus()` |
-| 34 | POST | `/auth/logout` | `AuthController` | `authService.logout()` |
-| 35 | POST | `/auth/forgot-password` | `AuthController` | `authService.forgotPassword()` |
-| 36 | POST | `/auth/verify-otp` | `AuthController` | `authService.verifyOtp()` |
-| 37 | POST | `/auth/reset-password` | `AuthController` | `authService.resetPassword()` |
-| 38 | PUT | `/auth/change-password` | `AuthController` | `authService.changePassword()` |
-| 39 | GET | `/meal-plans/{id}` | `MealPlanController` | `mealService.getMealPlanById()` |
-| 40 | GET | `/meal-plans/{planId}/meals` | `MealController` | `mealService.getMeals()` |
-| 41 | GET | `/meal-plan-templates` | `MealPlanTemplateController` | `mealService.getTemplates()` |
-| 42 | GET | `/ingredients` | `IngredientController` | `ingredientService.getIngredients()` |
-| 43 | GET | `/admin/users/{id}` | `AdminController` | `adminService.getUserById()` |
-| 44 | GET | `/admin/dishes` | `AdminController` | `adminService.getDishes()` |
-| 45 | POST | `/admin/dishes` | `AdminController` | `adminService.createDish()` |
-| 46 | PUT | `/admin/dishes/{id}` | `AdminController` | `adminService.updateDish()` |
-| 47 | DELETE | `/admin/dishes/{id}` | `AdminController` | `adminService.deleteDish()` |
+| 24 | GET | `/meal-plans/{planId}/meals/{type}/portions` | `PortionController` | `mealService.getPortions()` |
+| 25 | POST | `/meal-plans/{planId}/meals/{type}/portions` | `PortionController` | `mealService.addPortion()` |
+| 26 | PUT | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `PortionController` | `mealService.updatePortion()` |
+| 27 | DELETE | `/meal-plans/{planId}/meals/{type}/portions/{id}` | `PortionController` | `mealService.deletePortion()` |
+| 28 | GET | `/admin/statistics` | `AdminController` | `adminService.getStatistics()` |
+| 29 | GET | `/admin/users` | `AdminController` | `adminService.getUsers()` |
+| 30 | PATCH | `/admin/users/{id}/lock` | `AdminController` | `adminService.lockUser()` |
+| 31 | PATCH | `/admin/users/{id}/unlock` | `AdminController` | `adminService.unlockUser()` |
+| 32 | DELETE | `/admin/users/{id}` | `AdminController` | `adminService.deleteUser()` |
+| 33 | GET | `/admin/feedbacks` | `AdminController` | `adminService.getFeedbacks()` |
+| 34 | PATCH | `/admin/feedbacks/{id}/status` | `AdminController` | `adminService.updateFeedbackStatus()` |
+| 35 | POST | `/auth/logout` | `AuthController` | `authService.logout()` |
+| 36 | POST | `/auth/forgot-password` | `AuthController` | `authService.forgotPassword()` |
+| 37 | POST | `/auth/verify-otp` | `AuthController` | `authService.verifyOtp()` |
+| 38 | POST | `/auth/reset-password` | `AuthController` | `authService.resetPassword()` |
+| 39 | PUT | `/auth/change-password` | `AuthController` | `authService.changePassword()` |
+| 40 | GET | `/meal-plans/{id}` | `MealPlanController` | `mealService.getMealPlanById()` |
+| 41 | GET | `/meal-plans/{planId}/meals` | `MealController` | `mealService.getMeals()` |
+| 42 | GET | `/meal-plan-templates` | `MealPlanTemplateController` | `mealService.getTemplates()` |
+| 43 | GET | `/ingredients` | `IngredientController` | `ingredientService.getIngredients()` |
+| 44 | GET | `/admin/users/{id}` | `AdminController` | `adminService.getUserById()` |
+| 45 | GET | `/admin/dishes` | `AdminController` | `adminService.getDishes()` |
+| 46 | POST | `/admin/dishes` | `AdminController` | `adminService.createDish()` |
+| 47 | PUT | `/admin/dishes/{id}` | `AdminController` | `adminService.updateDish()` |
+| 48 | DELETE | `/admin/dishes/{id}` | `AdminController` | `adminService.deleteDish()` |
+
+### ⏳ BE chưa implement — FE chưa gọi (Giai đoạn 6-10)
+
+| # | Method | Endpoint | BE Controller | FE Service | Giai đoạn |
+|---|---|---|---|---|---|
+| 48 | POST | `/feedbacks` | `UserFeedbackController` | `feedbackService.sendFeedback()` | Giai đoạn 5 |
+| 49 | GET | `/feedbacks` | `UserFeedbackController` | `feedbackService.getMyFeedbacks()` | Giai đoạn 5 |
+| 50 | POST | `/dish-categories` | `DishCategoryController` | `adminService.createCategory()` | Giai đoạn 6 |
+| 51 | PUT | `/dish-categories/{id}` | `DishCategoryController` | `adminService.updateCategory()` | Giai đoạn 6 |
+| 52 | DELETE | `/dish-categories/{id}` | `DishCategoryController` | `adminService.deleteCategory()` | Giai đoạn 6 |
+| 53 | GET | `/dishes?keyword=&categoryId=&minCal=&maxCal=&page=&size=` | `DishController` | `dishService.getDishes()` | Giai đoạn 7 |
+| 54 | POST | `/dishes` (with `ingredients[]`) | `DishController` | `dishService.createCustomDish()` | Giai đoạn 7 |
+| 55 | POST | `/meal-plan-templates` | `MealPlanTemplateController` | `mealService.saveTemplate()` | Giai đoạn 8 |
+| 56 | DELETE | `/meal-plan-templates/{id}` | `MealPlanTemplateController` | `mealService.deleteTemplate()` | Giai đoạn 8 |
+| 57 | PUT | `/meal-plans/{id}` (nested `meals[]`) | `MealPlanController` | `mealService.updateMealPlan()` | Giai đoạn 9 |
 
 ### ✅ BE implement nhưng FE chưa gọi
 
@@ -887,7 +1133,7 @@ Lấy danh sách món `source = "custom"` của user. FE chưa gọi trực ti�
 
 ---
 
-## 15. Enum Values
+## 17. Enum Values
 
 > Tất cả enum gửi/nhận đều là **lowercase string**, khớp với MySQL ENUM.
 

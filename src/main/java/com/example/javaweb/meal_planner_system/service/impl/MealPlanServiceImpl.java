@@ -2,13 +2,21 @@ package com.example.javaweb.meal_planner_system.service.impl;
 
 // Module: Service
 
-import com.example.javaweb.meal_planner_system.dto.MealPlanDTO;
-import com.example.javaweb.meal_planner_system.entity.MealPlan;
+import com.example.javaweb.meal_planner_system.dto.*;
+import com.example.javaweb.meal_planner_system.entity.*;
+import com.example.javaweb.meal_planner_system.entity.enums.MealType;
 import com.example.javaweb.meal_planner_system.repository.MealPlanRepository;
+import com.example.javaweb.meal_planner_system.repository.MealRepository;
+import com.example.javaweb.meal_planner_system.repository.PortionRepository;
+import com.example.javaweb.meal_planner_system.repository.NutritionInfoRepository;
+import com.example.javaweb.meal_planner_system.repository.DishRepository;
 import com.example.javaweb.meal_planner_system.service.MealPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +32,18 @@ public class MealPlanServiceImpl implements MealPlanService {
 
     @Autowired
     private com.example.javaweb.meal_planner_system.service.UserAccountService userAccountService;
+
+    @Autowired
+    private MealRepository mealRepository;
+
+    @Autowired
+    private PortionRepository portionRepository;
+
+    @Autowired
+    private DishRepository dishRepository;
+
+    @Autowired
+    private NutritionInfoRepository nutritionInfoRepository;
 
     @Override
     public MealPlan save(MealPlan mealPlan) {
@@ -78,11 +98,65 @@ public class MealPlanServiceImpl implements MealPlanService {
     }
 
     @Override
-    public MealPlanDTO updateFromDTO(Long id, MealPlanDTO mealPlanDTO) {
+    @Transactional
+    public MealPlanDTO updateFromDTO(Long id, MealPlanUpdateDTO dto) {
         MealPlan plan = findById(id);
-        plan.setPlanName(mealPlanDTO.getPlanName());
-        plan.setPlanDate(mealPlanDTO.getPlanDate());
-        MealPlan updated = mealPlanRepository.save(plan);
-        return convertToDTO(updated);
+
+        if (dto.getPlanName() != null) {
+            plan.setPlanName(dto.getPlanName());
+        }
+        if (dto.getPlanDate() != null) {
+            plan.setPlanDate(dto.getPlanDate());
+        }
+        mealPlanRepository.save(plan);
+
+        // Xóa portions và meals cũ
+        List<Meal> existingMeals = mealRepository.findByMealPlanId(id);
+        for (Meal meal : existingMeals) {
+            List<Portion> portions = portionRepository.findByMealId(meal.getId());
+            portionRepository.deleteAll(portions);
+        }
+        mealRepository.deleteAll(existingMeals);
+
+        // Tạo meals và portions mới
+        if (dto.getMeals() != null) {
+            for (MealUpdateDTO mealDTO : dto.getMeals()) {
+                Meal meal = new Meal();
+                meal.setMealPlan(plan);
+                meal.setMealType(mealDTO.getMealType() != null ? mealDTO.getMealType() : MealType.BREAKFAST);
+                Meal savedMeal = mealRepository.save(meal);
+
+                if (mealDTO.getPortions() != null) {
+                    for (PortionUpdateDTO portionDTO : mealDTO.getPortions()) {
+                        Dish dish = dishRepository.findById(portionDTO.getDishId())
+                                .orElseThrow(() -> new com.example.javaweb.meal_planner_system.exception.ResourceNotFoundException("Dish not found with id " + portionDTO.getDishId()));
+
+                        Portion portion = new Portion();
+                        portion.setMeal(savedMeal);
+                        portion.setDish(dish);
+                        portion.setQuantityG(portionDTO.getQuantityG());
+
+                        // Auto-calculate nutrition from NutritionInfo
+                        NutritionInfo nutrition = nutritionInfoRepository.findByDishId(dish.getId()).orElse(null);
+                        if (nutrition != null && portionDTO.getQuantityG() != null) {
+                            BigDecimal factor = portionDTO.getQuantityG().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
+                            portion.setCaloriesKcal(multiplyNullable(nutrition.getCaloriesPer100g(), factor));
+                            portion.setProteinG(multiplyNullable(nutrition.getProteinPer100g(), factor));
+                            portion.setCarbG(multiplyNullable(nutrition.getCarbPer100g(), factor));
+                            portion.setFatG(multiplyNullable(nutrition.getFatPer100g(), factor));
+                        }
+
+                        portionRepository.save(portion);
+                    }
+                }
+            }
+        }
+
+        return convertToDTO(plan);
+    }
+
+    private BigDecimal multiplyNullable(BigDecimal value, BigDecimal factor) {
+        if (value == null) return null;
+        return value.multiply(factor).setScale(2, RoundingMode.HALF_UP);
     }
 }

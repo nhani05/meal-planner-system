@@ -15,6 +15,15 @@ public class PortionController {
     @Autowired
     private PortionService portionService;
 
+    @GetMapping("/{planId}/meals/{mealType}/portions")
+    public ResponseEntity<?> getPortions(
+            @PathVariable Long planId,
+            @PathVariable String mealType) {
+
+        MealType type = MealType.fromValue(mealType.toLowerCase());
+        return ResponseEntity.ok(portionService.getPortionsByMealPlanAndType(planId, type));
+    }
+
     @PostMapping("/{planId}/meals/{mealType}/portions")
     public ResponseEntity<?> addPortion(
             @PathVariable Long planId,

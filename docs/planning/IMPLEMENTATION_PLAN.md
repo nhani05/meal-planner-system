@@ -82,4 +82,77 @@ Khi thêm hoặc cập nhật `Portion`, Backend phải:
 - ✅ `PUT /admin/dishes/{id}` (cập nhật toàn bộ) — `AdminController`
 - ✅ `DELETE /admin/dishes/{id}` (kiểm tra portions trước khi xóa) — `AdminController`
 
-> **Tất cả backend endpoints đã được triển khai hoàn chỉnh!**
+> **Tất cả backend endpoints CƠ BẢN đã triển khai. Các tính năng nâng cao / còn thiếu theo UR-09..UR-19 đang được lên kế hoạch bên dưới.**
+
+---
+
+## Danh sách endpoint / tính năng còn thiếu cần triển khai
+
+### Giai đoạn 5: User Feedback — UR-19 ⏳ Chưa triển khai
+- `POST /feedbacks` — Người dùng gửi phản hồi / góp ý (cần `FeedbackCreateDTO`)
+- `GET /feedbacks` — Người dùng xem lại danh sách phản hồi của chính mình
+- **File cần tạo / chỉnh sửa:**
+  - `controller/UserFeedbackController.java` — TẠO MỚI (hoặc bổ sung vào `FeedbackController`)
+  - `dto/FeedbackCreateDTO.java` — TẠO MỚI (`content` bắt buộc)
+  - `service/UserFeedbackService.java` + `impl` — TẠO MỚI
+- **Logic nghiệp vụ:**
+  - Ghi nhận `accountId` từ JWT, `status` mặc định `"pending"`.
+  - Không cho phép user sửa/xóa feedback sau khi gửi.
+
+### Giai đoạn 6: Admin Dish Category CRUD — UR-17 ⏳ Chưa triển khai
+- `POST /dish-categories` — Admin tạo danh mục mới
+- `PUT /dish-categories/{id}` — Admin sửa tên danh mục
+- `DELETE /dish-categories/{id}` — Admin xóa danh mục (kiểm tra không có Dish đang tham chiếu)
+- **File cần chỉnh sửa:**
+  - `controller/DishCategoryController.java` — THÊM 3 endpoints, bảo vệ `@PreAuthorize("hasRole('ADMIN')")`
+  - `service/DishCategoryService.java` + `impl` — THÊM `create`, `update`, `delete`
+- **Logic nghiệp vụ:**
+  - Tên danh mục `UNIQUE`, không cho xóa nếu còn `Dish` thuộc category.
+
+### Giai đoạn 7: Dish Filter & Auto-calc Nutrition — UR-13 + UR-14 ⏳ Chưa triển khai
+- `GET /dishes` — Bổ sung query params: `keyword`, `categoryId`, `minCal`, `maxCal`, `page`, `size` (hiện BE trả toàn bộ)
+- `POST /dishes` (custom dish) — Khi request bao gồm `ingredients[]`, hệ thống tự động tính `NutritionInfo` (caloriesPer100g, proteinPer100g, carbPer100g, fatPer100g) từ tổng nguyên liệu.
+- **File cần chỉnh sửa:**
+  - `controller/DishController.java` — Sửa `GET /dishes` thêm filter params; Sửa `POST /dishes` nhận thêm `ingredients`
+  - `service/DishService.java` + `impl` — THÊM `searchDishes(...)`, `calculateNutritionFromIngredients(...)`
+  - `repository/DishRepository.java` — THÊM `@Query` JPQL filter theo `name`, `categoryId`, JOIN `NutritionInfo` lọc theo `caloriesPer100g`
+- **Logic nghiệp vụ:**
+  - Filter kết hợp nhiều điều kiện, dùng `Specification` hoặc JPQL.
+  - Auto-calc: tổng khối lượng nguyên liệu → tính dinh dưỡng trên 100g món ăn hoàn chỉnh.
+
+### Giai đoạn 8: Meal Plan Templates (POST/DELETE) — UR-12 ⏳ Chưa triển khai
+- `POST /meal-plan-templates?accountId={id}` — Lưu một `MealPlan` hiện có thành template (sao chép `Meal` → `TemplateMeal`, `Portion` → `TemplatePortion`)
+- `DELETE /meal-plan-templates/{id}` — Xóa template của user
+- **File cần tạo / chỉnh sửa:**
+  - `controller/MealPlanTemplateController.java` — THÊM 2 endpoints
+  - `service/MealPlanTemplateService.java` + `impl` — THÊM `saveTemplateFromMealPlan(...)`, `deleteTemplate(...)`
+  - `entity/TemplateMeal.java`, `TemplatePortion.java` — KIỂM TRA đã tồn tại chưa
+  - `repository/TemplateMealRepository.java`, `TemplatePortionRepository.java` — KIỂM TRA
+- **Logic nghiệp vụ:**
+  - Clone: `TemplateMeal` không có `plan_date`, chỉ có cấu trúc `meal_type` + danh sách `TemplatePortion` (dishId, quantityG).
+  - Chỉ chủ sở hữu mới được xóa template của mình.
+
+### Giai đoạn 9: PUT Meal Plans (nested update) — UR-09 ⏳ Chưa triển khai
+- `PUT /meal-plans/{id}` — Cập nhật không chỉ `planName`/`planDate` mà còn cấu trúc bên trong (thêm/xóa/sửa `Meal` và `Portion`).
+- **File cần chỉnh sửa:**
+  - `controller/MealPlanController.java` — Sửa `PUT` nhận `MealPlanUpdateRequestDTO` chứa nested `meals[]`
+  - `service/MealPlanService.java` + `impl` — THÊM logic `updateMealPlanWithNestedMeals(...)`
+- **Logic nghiệp vụ:**
+  - So sánh danh sách meals/portions gửi lên với DB: giữ lại cái cũ không đổi, thêm mới, xóa thiếu, cập nhật quantity.
+  - Tự động tính lại dinh dưỡng cho các `Portion` bị thay đổi.
+
+---
+
+## Kế hoạch thực hiện tổng hợp (cập nhật)
+
+| Giai đoạn | Nội dung | Trạng thái | Ưu tiên |
+|---|---|---|---|
+| **Giai đoạn 1** | Health Goal, Categories, Ingredients (cơ bản) | ✅ Hoàn thành | - |
+| **Giai đoạn 2** | Ratings, Favorites | ✅ Hoàn thành | - |
+| **Giai đoạn 3** | Portions (tính toán dinh dưỡng) | ✅ Hoàn thành | - |
+| **Giai đoạn 4** | Admin module (stats, users, feedbacks, dishes) | ✅ Hoàn thành | - |
+| **Giai đoạn 5** | User Feedback (POST/GET /feedbacks) | ⏳ Chưa triển khai | **Cao** |
+| **Giai đoạn 6** | Admin Dish Category CRUD | ⏳ Chưa triển khai | **Cao** |
+| **Giai đoạn 7** | Dish Filter & Auto-calc Nutrition | ⏳ Chưa triển khai | **Cao** |
+| **Giai đoạn 8** | Meal Plan Templates (POST/DELETE) | ⏳ Chưa triển khai | **Trung bình** |
+| **Giai đoạn 9** | PUT Meal Plans (nested meals/portions) | ⏳ Chưa triển khai | **Trung bình** |

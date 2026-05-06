@@ -112,6 +112,32 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
   /meal-plans/{planId}/meals/{mealType}/portions:
+    get:
+      summary: Get portions for a meal
+      parameters:
+        - in: path
+          name: planId
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: mealType
+          required: true
+          schema:
+            type: string
+            description: breakfast|lunch|dinner|snack
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of portions (may be empty)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PortionDTO'
     post:
       summary: Add portion to meal
       parameters:
