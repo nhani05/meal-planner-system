@@ -9,7 +9,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum ActivityLevel {
     LOW("low"),
     MEDIUM("medium"),
-    HIGH("high");
+    HIGH("high"),
+    SEDENTARY("sedentary"),
+    LIGHT("light"),
+    MODERATE("moderate"),
+    ACTIVE("active"),
+    VERY_ACTIVE("very_active");
 
     private final String value;
 
