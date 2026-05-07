@@ -47,6 +47,9 @@ public class UserAccount {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "failed_login_attempts")
+    private Integer failedLoginAttempts = 0;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -56,5 +59,24 @@ public class UserAccount {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    // Account lockout methods
+    public boolean isLocked() {
+        return status == com.example.javaweb.meal_planner_system.entity.enums.UserStatus.LOCKED;
+    }
+
+    public void recordFailedLoginAttempt() {
+        if (failedLoginAttempts == null) {
+            failedLoginAttempts = 0;
+        }
+        failedLoginAttempts++;
+        if (failedLoginAttempts >= 5) {
+            status = com.example.javaweb.meal_planner_system.entity.enums.UserStatus.LOCKED;
+        }
+    }
+
+    public void resetFailedLoginAttempts() {
+        failedLoginAttempts = 0;
     }
 }

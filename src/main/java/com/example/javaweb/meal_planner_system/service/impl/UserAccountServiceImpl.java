@@ -158,4 +158,9 @@ public class UserAccountServiceImpl implements UserAccountService {
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userAccountRepository.save(user);
     }
+
+    @Override
+    public UserAccount save(UserAccount userAccount) {
+        return userAccountRepository.save(userAccount);
+    }
 }

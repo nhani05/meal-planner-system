@@ -11,14 +11,16 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ============================================================
 
 CREATE TABLE tblUserAccount (
-    id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    username      VARCHAR(50)  NOT NULL UNIQUE,
-    email         VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role          ENUM('user', 'admin') NOT NULL DEFAULT 'user',
-    status        ENUM('active', 'locked', 'deleted') NOT NULL DEFAULT 'active',
-    created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    id                    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    username              VARCHAR(50)  NOT NULL UNIQUE,
+    email                 VARCHAR(100) NOT NULL UNIQUE,
+    password_hash         VARCHAR(255) NOT NULL,
+    role                  ENUM('user', 'admin') NOT NULL DEFAULT 'user',
+    status                ENUM('active', 'locked', 'deleted') NOT NULL DEFAULT 'active',
+    failed_login_attempts INT DEFAULT 0 COMMENT 'Số lần đăng nhập sai liên tiếp',
+    locked_until          DATETIME NULL COMMENT 'Tạm thời chưa sử dụng - dự phòng cho tính năng tự động mở khóa sau N phút',
+    created_at            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE tblHealthProfile (

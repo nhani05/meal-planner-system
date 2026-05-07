@@ -50,7 +50,20 @@ public class AuthController {
         var user = userAccountService.findByUsername(loginDTO.getUsername());
         if (user.isPresent()) {
             var u = user.get();
+
+            // Check if account is locked
+            if (u.isLocked()) {
+                java.util.Map<String, Object> errorBody = new java.util.HashMap<>();
+                errorBody.put("message", "Account has been locked due to too many failed login attempts.");
+                errorBody.put("locked", true);
+                return ResponseEntity.status(423).body(errorBody); // 423 Locked
+            }
+
             if (passwordEncoder.matches(loginDTO.getPassword(), u.getPasswordHash())) {
+                // Reset failed attempts on successful login
+                u.resetFailedLoginAttempts();
+                userAccountService.save(u);
+
                 String token = jwtUtil.generateToken(u);
                 var dto = userAccountService.convertToDTO(u);
                 java.util.Map<String, Object> body = new java.util.HashMap<>();
@@ -58,7 +71,22 @@ public class AuthController {
                 body.put("user", dto);
                 return ResponseEntity.ok(body);
             }
-            throw new com.example.javaweb.meal_planner_system.exception.BadRequestException("Invalid username or password");
+
+            // Record failed login attempt
+            u.recordFailedLoginAttempt();
+            userAccountService.save(u);
+
+            // Check if account just got locked
+            if (u.isLocked()) {
+                java.util.Map<String, Object> errorBody = new java.util.HashMap<>();
+                errorBody.put("message", "Account has been locked due to too many failed login attempts.");
+                errorBody.put("locked", true);
+                return ResponseEntity.status(423).body(errorBody);
+            }
+
+            int remainingAttempts = 5 - u.getFailedLoginAttempts();
+            throw new com.example.javaweb.meal_planner_system.exception.BadRequestException(
+                "Invalid username or password. " + remainingAttempts + " attempts remaining.");
         }
         throw new com.example.javaweb.meal_planner_system.exception.BadRequestException("Invalid username or password");
     }
