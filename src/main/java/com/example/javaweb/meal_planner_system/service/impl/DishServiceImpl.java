@@ -82,7 +82,8 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public DishDTO convertToDTO(Dish dish) {
-        return com.example.javaweb.meal_planner_system.converter.DishConverter.toDTO(dish);
+        NutritionInfo nutritionInfo = nutritionInfoRepository.findByDishId(dish.getId()).orElse(null);
+        return DishConverter.toDTO(dish, nutritionInfo);
     }
 
     @Override
@@ -105,7 +106,11 @@ public class DishServiceImpl implements DishService {
         BigDecimal minCalBd = (minCal != null && !minCal.isBlank()) ? new BigDecimal(minCal) : null;
         BigDecimal maxCalBd = (maxCal != null && !maxCal.isBlank()) ? new BigDecimal(maxCal) : null;
         return dishRepository.searchDishes(keyword, categoryId, minCalBd, maxCalBd, pageable)
-                .map(DishConverter::toDTO);
+                .map(dish -> {
+                    // Fetch nutrition info for each dish
+                    NutritionInfo nutritionInfo = nutritionInfoRepository.findByDishId(dish.getId()).orElse(null);
+                    return DishConverter.toDTO(dish, nutritionInfo);
+                });
     }
 
     @Override
@@ -159,6 +164,8 @@ public class DishServiceImpl implements DishService {
             }
         }
 
-        return DishConverter.toDTO(savedDish);
+        // Fetch and return nutrition info if it was saved
+        NutritionInfo savedNutrition = nutritionInfoRepository.findByDishId(savedDish.getId()).orElse(null);
+        return DishConverter.toDTO(savedDish, savedNutrition);
     }
 }
