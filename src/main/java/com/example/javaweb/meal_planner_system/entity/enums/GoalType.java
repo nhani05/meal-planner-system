@@ -9,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum GoalType {
     WEIGHT_LOSS("weight_loss"),
     MUSCLE_GAIN("muscle_gain"),
-    MAINTAIN("maintain");
+    MAINTAIN("maintain"),
+    MAINTENANCE("maintenance"),
+    ENDURANCE("endurance");
 
     private final String value;
 

@@ -40,8 +40,8 @@ CREATE TABLE tblHealthProfile (
 CREATE TABLE tblHealthGoal (
     id             BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     account_id     BIGINT UNSIGNED NOT NULL,
-    goal_type      ENUM('weight_loss', 'muscle_gain', 'maintain') NOT NULL,
-    activity_level ENUM('low', 'medium', 'high') NOT NULL DEFAULT 'medium',
+    goal_type      ENUM('weight_loss', 'muscle_gain', 'maintain', 'maintenance', 'endurance') NOT NULL,
+    activity_level ENUM('low', 'medium', 'high', 'sedentary', 'light', 'moderate', 'active', 'very_active') NOT NULL DEFAULT 'medium',
     target_weight_kg    DECIMAL(5,2),
     daily_calories_kcal INT UNSIGNED,
     protein_g_day       DECIMAL(6,2),
