@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * DTO for Dish
  */
@@ -20,4 +22,22 @@ public class DishDTO {
     private DishSource source;
     private DishDifficulty difficulty;
     private Integer totalTimeMin;
+
+    /**
+     * Simplified nutrition info for frontend display (per serving, approx 300g)
+     */
+    private NutritionSummaryDTO nutritionInfo;
+
+    /**
+     * Inner DTO for simplified nutrition display
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NutritionSummaryDTO {
+        private BigDecimal caloriesKcal;
+        private BigDecimal proteinG;
+        private BigDecimal carbG;
+        private BigDecimal fatG;
+    }
 }
