@@ -23,4 +23,7 @@ public interface UserAccountService {
     void verifyOtp(String email, String otp);
     void resetPassword(String token, String newPassword);
     void changePassword(Long accountId, String oldPassword, String newPassword);
+
+    // Account lockout
+    UserAccount save(UserAccount userAccount);
 }
