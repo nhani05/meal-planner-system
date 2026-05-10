@@ -20,7 +20,7 @@
 
 ## 🌟 Giới thiệu
 
-**NutriPlan** là một hệ thống quản lý dinh dưỡng và lập kế hoạch bữa ăn được xây dựng cho đồ án môn **Lập trình Web Java** tại **Học viện Công nghệ Bưu chính Viễn thông – Nhóm 04**.
+**NutriPlan** là một hệ thống quản lý dinh dưỡng và lập kế hoạch bữa 
 
 Hệ thống cho phép người dùng:
 - Lên kế hoạch bữa ăn theo từng ngày trong tuần
