@@ -1268,7 +1268,7 @@ interface UserStore {
 - **Unit Test (BE):** JUnit 5 + Mockito cho tất cả Service classes
 - **Integration Test (BE):** MockMvc cho Controller layer
 - **Manual Test:** Theo từng Test Case trong tài liệu Design
-- **API Test:** Postman Collection tại `docs/postman_collection.json`
+- **API Test:** Postman Collection tại `docs/POSTMAN_COLLECTION.json`
 
 ### 10.2 Test Case – UC01 Đăng ký (`POST /auth/register`)
 

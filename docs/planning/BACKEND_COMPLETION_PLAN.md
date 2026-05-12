@@ -5,7 +5,7 @@
 > **Tổng endpoint đã hoàn thành (Giai đoạn 1-5):** 14  
 > **Tổng endpoint còn thiếu (Giai đoạn 6-10):** 10  
 > **Kiến trúc:** Spring Boot 3-layer (Controller → Service → Repository)  
-> **Mục tiêu:** Triển khai toàn bộ endpoint BE chưa implement để khớp với `N4_SE.md` (UR-09 đến UR-19).
+> **Mục tiêu:** Triển khai toàn bộ endpoint BE chưa implement để khớp với [N4_SE.md](./N4_SE.md) (UR-09 đến UR-19).
 
 ---
 
@@ -205,7 +205,7 @@ src/main/java/com/example/javaweb/meal_planner_system/
 
 ## 5. Kiểm thử từng endpoint
 
-Sau mỗi giai đoạn, dùng Postman collection tại `docs/postman_collection.json` hoặc cURL để kiểm tra:
+Sau mỗi giai đoạn, dùng Postman collection tại [`docs/POSTMAN_COLLECTION.json`](../POSTMAN_COLLECTION.json) hoặc cURL để kiểm tra:
 
 ```bash
 # Ví dụ kiểm tra forgot-password

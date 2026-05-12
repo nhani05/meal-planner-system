@@ -1,6 +1,6 @@
 # Chiến lược triển khai API Endpoints còn thiếu
 
-Triển khai toàn bộ các endpoint được liệt kê trong tài liệu [API Endpoints](api_endpoints.md) theo mô hình 3 lớp.
+Triển khai toàn bộ các endpoint được liệt kê trong tài liệu [API Endpoints](../API.md) theo mô hình 3 lớp.
 
 ## Phân nhóm triển khai
 

@@ -10,11 +10,12 @@
 docs/
 ├── README.md                          # File này — Index & hướng dẫn
 ├── API.md                             # Tài liệu API Endpoints đầy đủ (request/response/enum)
-├── OPENAPI.yaml                       # OpenAPI 3.0 Specification — import vào Swagger UI
-├── POSTMAN_COLLECTION.json            # Postman Collection — test API nhanh
+├── openapi.yaml                       # OpenAPI 3.0 — import Swagger / codegen
+├── POSTMAN_COLLECTION.json            # Postman Collection (JSON) — test API nhanh
 ├── database/
 │   └── ENTITY_DOCUMENTATION.md        # Mô tả chi tiết các Entity & bảng CSDL
 └── planning/
+    ├── N4_SE.md                       # Báo cáo môn Nhập môn CNPM (yêu cầu, phân tích, thiết kế)
     ├── IMPLEMENTATION_PLAN.md         # Kế hoạch triển khai tổng thể & trạng thái
     ├── IMPLEMENTATION_DOCUMENT.md     # Tài liệu thiết kế chi tiết (ERD, bảng, rule)
     └── BACKEND_COMPLETION_PLAN.md     # Lịch sử kế hoạch hoàn thiện các endpoint
@@ -29,7 +30,7 @@ docs/
 | Nhu cầu | File tham khảo |
 |---|---|
 | Xem danh sách endpoint, method, auth, request/response | `API.md` |
-| Import spec vào Swagger/Swagger UI | `OPENAPI.yaml` |
+| Import spec vào Swagger / codegen | `openapi.yaml` |
 | Test trực tiếp trên Postman | `POSTMAN_COLLECTION.json` |
 
 ### 2. Hiểu Schema & Entity
@@ -45,18 +46,20 @@ docs/
 |---|---|
 | Trạng thái triển khai các phase | `planning/IMPLEMENTATION_PLAN.md` |
 | Lịch sử endpoint đã hoàn thành | `planning/BACKEND_COMPLETION_PLAN.md` |
+| Báo cáo bài tập lớn (N4 CNPM) | `planning/N4_SE.md` |
 
 ---
 
 ## 🔗 Liên kết nhanh
 
 - [API Endpoints](./API.md)
-- [OpenAPI Spec](./OPENAPI.yaml)
+- [OpenAPI Spec](./openapi.yaml)
 - [Postman Collection](./POSTMAN_COLLECTION.json)
 - [Entity Documentation](./database/ENTITY_DOCUMENTATION.md)
 - [Implementation Plan](./planning/IMPLEMENTATION_PLAN.md)
 - [Implementation Document](./planning/IMPLEMENTATION_DOCUMENT.md)
 - [Backend Completion History](./planning/BACKEND_COMPLETION_PLAN.md)
+- [Báo cáo N4 — Nhập môn CNPM](./planning/N4_SE.md)
 
 ---
 

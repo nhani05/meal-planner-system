@@ -1,6 +1,0 @@
-$kind: http-request
-url: "{{baseUrl}}/meal-plans/1/meals"
-method: GET
-headers:
-  Authorization: Bearer {{token}}
-order: 5000
