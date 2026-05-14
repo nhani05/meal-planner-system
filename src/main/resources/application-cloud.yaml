@@ -1,41 +1,10 @@
-spring:
-  config:
-    activate:
-      on-profile: cloud
-
-  datasource:
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT:3306}/${DB_NAME}?useSSL=true&requireSSL=true&verifyServerCertificate=false&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:${SERVER_PORT:8080}}
   servlet:
     context-path: /api
 
-# logging:
-#   level:
-#     root: WARN
-#     com.mealplanner: INFO
-#     org.hibernate.SQL: WARN
-#   pattern:
-#     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# app:
-#   jwt:
-#     secret: ${JWT_SECRET}
-#     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
-#     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
-
-#   cors:
-#     allowed-origins:
-#       - ${FRONTEND_URL:https://mealplanner.vn}
-#     allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
-#     allowed-headers: "*"
-#     allow-credentials: true
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
