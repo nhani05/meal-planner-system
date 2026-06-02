@@ -28,7 +28,7 @@ public class UserFeedbackController {
         }
 
         String content = requestBody.get("content");
-        return ResponseEntity.ok(userFeedbackService.submitFeedback(accountId, content));
+        return ResponseEntity.status(201).body(userFeedbackService.submitFeedback(accountId, content));
     }
 
     @GetMapping

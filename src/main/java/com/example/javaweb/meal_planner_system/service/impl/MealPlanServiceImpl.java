@@ -20,6 +20,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of MealPlanService
@@ -77,6 +78,32 @@ public class MealPlanServiceImpl implements MealPlanService {
     @Override
     public MealPlanDTO convertToDTO(MealPlan mealPlan) {
         return com.example.javaweb.meal_planner_system.converter.MealPlanConverter.toDTO(mealPlan);
+    }
+
+    @Override
+    public MealPlanDTO convertToDetailedDTO(MealPlan mealPlan) {
+        MealPlanDTO dto = convertToDTO(mealPlan);
+        List<MealDTO> meals = mealRepository.findByMealPlanId(mealPlan.getId()).stream()
+                .map(meal -> {
+                    MealDTO mealDTO = new MealDTO(meal.getId(), mealPlan.getId(), meal.getMealType());
+                    List<PortionDTO> portions = portionRepository.findByMealId(meal.getId()).stream()
+                            .map(portion -> new PortionDTO(
+                                    portion.getId(),
+                                    meal.getId(),
+                                    portion.getDish() != null ? portion.getDish().getId() : null,
+                                    portion.getQuantityG(),
+                                    portion.getCaloriesKcal(),
+                                    portion.getProteinG(),
+                                    portion.getCarbG(),
+                                    portion.getFatG()
+                            ))
+                            .collect(Collectors.toList());
+                    mealDTO.setPortions(portions);
+                    return mealDTO;
+                })
+                .collect(Collectors.toList());
+        dto.setMeals(meals);
+        return dto;
     }
 
     @Override
@@ -152,7 +179,7 @@ public class MealPlanServiceImpl implements MealPlanService {
             }
         }
 
-        return convertToDTO(plan);
+        return convertToDetailedDTO(plan);
     }
 
     private BigDecimal multiplyNullable(BigDecimal value, BigDecimal factor) {
