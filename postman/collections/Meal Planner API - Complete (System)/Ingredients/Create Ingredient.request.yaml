@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/ingredients"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "dishId": 1,
+      "name": "Chicken Breast",
+      "quantityG": 500.0,
+      "unit": "g"
+    }
+order: 3000

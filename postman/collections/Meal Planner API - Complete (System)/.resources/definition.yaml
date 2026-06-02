@@ -1,0 +1,5 @@
+$kind: collection
+name: Meal Planner API - Complete (System)
+variables:
+  baseUrl: https://meal-planner-system.onrender.com
+  token: ""

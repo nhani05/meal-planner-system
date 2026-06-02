@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/meal-plan-templates?accountId=1"
+method: GET
+headers:
+  Authorization: Bearer {{token}}
+queryParams:
+  accountId: "1"
+order: 6000

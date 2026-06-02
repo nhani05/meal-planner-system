@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/meal-plans?accountId=1"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+queryParams:
+  accountId: "1"
+body:
+  type: text
+  content: |-
+    {
+      "planName": "Gym Diet Plan",
+      "planDate": "2026-05-04"
+    }
+order: 2000

@@ -1,0 +1,9 @@
+.git
+.github
+.idea
+.cline
+target
+db-data
+docs
+.env
+*.log

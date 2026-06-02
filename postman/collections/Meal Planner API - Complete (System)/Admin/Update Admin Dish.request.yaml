@@ -1,0 +1,29 @@
+$kind: http-request
+url: "{{baseUrl}}/admin/dishes/1"
+method: PUT
+headers:
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "dish": {
+        "name": "Updated Grilled Chicken Salad",
+        "categoryId": 1,
+        "imageUrl": "https://example.com/salad.jpg",
+        "difficulty": "medium",
+        "totalTimeMin": 35
+      },
+      "nutrition": {
+        "caloriesPer100g": 130.00,
+        "proteinPer100g": 16.00,
+        "carbPer100g": 6.00,
+        "fatPer100g": 4.50
+      },
+      "ingredients": [
+        { "name": "Chicken Breast", "quantityG": 250.0, "unit": "g" },
+        { "name": "Lettuce", "quantityG": 100.0, "unit": "g" }
+      ]
+    }
+order: 11000
