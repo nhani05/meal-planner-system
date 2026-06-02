@@ -38,6 +38,9 @@ public class MealPlanTemplateServiceImpl implements MealPlanTemplateService {
 
     @Override
     public MealPlanTemplateDTO saveTemplate(Long accountId, Long sourcePlanId, String templateName) {
+        if (sourcePlanId == null) {
+            throw new BadRequestException("Source meal plan id is required");
+        }
         MealPlan sourcePlan = mealPlanService.findById(sourcePlanId);
         if (sourcePlan == null || !sourcePlan.getAccount().getId().equals(accountId)) {
             throw new BadRequestException("Source meal plan not found or not owned by user");

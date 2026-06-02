@@ -94,10 +94,10 @@ public class DishServiceImpl implements DishService {
         if (!dishRepository.existsById(id)) {
             throw new ResourceNotFoundException("Dish not found with id " + id);
         }
-        // Delete all portions associated with this dish first to satisfy FK constraints
         List<com.example.javaweb.meal_planner_system.entity.Portion> portions = portionRepository.findByDishId(id);
-        portionRepository.deleteAll(portions);
-        // Then delete the dish
+        if (!portions.isEmpty()) {
+            throw new BadRequestException("Cannot delete dish: it is currently used in meal plans");
+        }
         dishRepository.deleteById(id);
     }
 
