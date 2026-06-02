@@ -77,6 +77,11 @@
 			<artifactId>spring-boot-starter-validation-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- JWT library (JJWT 0.11.5 - stable version) -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

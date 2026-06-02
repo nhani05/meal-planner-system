@@ -21,19 +21,6 @@ jobs:
   build-test:
     name: Build and test
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.4
-        env:
-          MYSQL_DATABASE: meal_planner_system
-          MYSQL_ROOT_PASSWORD: "123456"
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -p123456"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
 
     steps:
       - name: Checkout source
@@ -46,14 +33,11 @@ jobs:
           java-version: "17"
           cache: maven
 
-      - name: Initialize MySQL schema
-        run: docker exec -i ${{ job.services.mysql.id }} mysql -uroot -p123456 meal_planner_system < db-data/meal_planner_schema.sql
-
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
 
       - name: Build and test with Maven
-        run: ./mvnw -B clean verify
+        run: ./mvnw -B clean verify -Dspring.profiles.active=ci
 
       - name: Upload packaged artifact
         uses: actions/upload-artifact@v4

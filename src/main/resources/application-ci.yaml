@@ -1,0 +1,32 @@
+spring:
+  config:
+    activate:
+      on-profile: ci
+
+  datasource:
+    url: jdbc:h2:mem:meal_planner_system;MODE=MySQL;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  sql:
+    init:
+      mode: never
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+app:
+  jwt:
+    secret: KjQwt1HL5uMkcx8KSfPWMJ3CrKpqbdPk2ymjGwV4yeJ1xNRy54yJwCrUOTMJqnEvfIMlkG9DQUkMlUVvNzG6DzKQ1/gTxO/ZKdi7bhA7g++mu4Xw5/GQwDXP/NxF5ei5oI7LjIAGN2HkhXf7QPeJGoicCoieczfQZXALkx9W+91NRYcNeyqlCN9dahvBHyB28IAT9sm1EoqQ2o/ROjl6Qn9YQq5y6GsknuOQzduNuizulOduUdSQJ04e20i8Cf7u843/Q1jVYfGtiDSWmdYoRoxGRnLOajELhqE+ruRGvFKL+tsCJ8NibsbZuuf49qfomCyfEm3lLBHCUh60RqB51A==
+    expiration-ms: 86400000
+    refresh-expiration-ms: 604800000
